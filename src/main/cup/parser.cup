@@ -1,0 +1,102 @@
+package com.sv;
+import java_cup.runtime.*;
+
+class Parser;
+
+// simples
+terminal PAREN_O, PAREN_I;
+terminal COMA, DOT_COMA, DOT;
+terminal ALL, ASSIGN;
+// datos primitivos
+terminal INT, DECI, STR;
+terminal VAR;
+// reservadas
+terminal CREATE, TABLE, SELECT, FROM, WHERE, UPDATE, SET, DEFAULT;
+terminal INSERT, INTO, VALUES, JOIN, ON, AS;
+// data types numericos
+terminal DT_INT, DT_DECIMAL, DT_FLOAT, DT_NUMERIC;
+// data types de texto
+terminal DT_CHAR, DT_VARCHAR, DT_TEXT;
+// data types de fecha y hora
+terminal DT_DATE, DT_TIME, DT_DATETIME;
+// data types booleanos
+terminal DT_BOOLEAN;
+
+//simbolos no terminales
+non terminal Object sql;
+non terminal Object sentence;
+non terminal Object create_stmt;
+non terminal Object select_stmt;
+non terminal Object update_stmt;
+non terminal Object insert_stmt;
+non terminal Object distinct_stmt;
+non terminal Object count_stmt;
+//
+non terminal Object column_list;
+non terminal Object value_list;
+non terminal Object table_ref;
+non terminal Object join_list;
+non terminal Object expr;
+non terminal Object data_type;
+non terminal Object column;
+
+precedence left COMA;
+
+start with sql;
+
+sql ::=
+    | sql sentence DOT_COMA
+    ;
+
+sentence ::= create_stmt
+    | select_stmt
+    | update_stmt
+    | insert_stmt
+    ;
+// CREATE TABLE NOMBRE_TABLA ( LISTA_COLUMNAS )
+create_stmt ::=
+    CREATE TABLE VAR PAREN_O column_list PAREN_I
+    ;
+
+column_list ::=
+    column
+    | column_list COMA column
+    | ALL
+    ;
+
+column ::=
+    VAR data_type
+    ;
+
+data_type ::=
+    DT_INT
+    | DT_DECIMAL PAREN_O INT COMA INT PAREN_I
+    | DT_FLOAT
+    | DT_NUMERIC PAREN_O INT COMA INT PAREN_I
+    | DT_CHAR PAREN_O INT PAREN_I
+    | DT_VARCHAR PAREN_O INT PAREN_I
+    | DT_TEXT
+    | DT_DATE
+    | DT_TIME
+    | DT_DATETIME
+    | DT_BOOLEAN
+    ;
+// SELECT LISTA_COLUMNAS FROM NOMBRE_TABLA
+select_stmt ::=
+    SELECT column_list FROM VAR expr DOT_COMA
+    | SELECT ALL FROM VAR expr DOT_COMA
+    | SELECT distinct_stmt FROM VAR expr DOT_COMA
+    | SELECT COUNT PAREN_O count_stmt PAREN_I expr DOT_COMA
+    ; // expr puede ser WHERE, JOINS, etc
+
+distinct_stmt ::=
+    DISTINCT column_list
+    ;
+
+count_stmt ::=
+    ALL
+    | VAR
+    ;
+
+
+
