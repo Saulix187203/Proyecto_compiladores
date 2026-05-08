@@ -14,6 +14,7 @@ DECIMAL    = ("-"?{NUMERO}+"."{NUMERO}+)
 STRING     = "\"" [^\"]* "\""
 ESPACIO    = [ \t\r\n]+
 ID         = {LETRA}({LETRA}|{NUMERO}|_)*
+NO_EQUAL  = ("!="|"<>")
 // Palabras reservadas
 RESERVADAS = ("create"|"table"|"select"|"from"|"where"|"update"|"set"|
               "insert"|"into"|"values"|"join"|"on"|"as"|"default")
@@ -45,6 +46,11 @@ DT_BOOL  = ("bit")
 "."     { return symbol(ParserSym.DOT); }
 "*"     { return symbol(ParserSym.ALL); }
 "="     { return symbol(ParserSym.ASSIGN); }
+">"     { return symbol(ParserSym.MAYOR); }
+"<"     { return symbol(ParserSym.MENOR); }
+">="    { return symbol(ParserSym.MAYOR_IGUAL); }
+"<="    { return symbol(ParserSym.MENOR_IGUAL); }
+{NO_EQUAL} { return symbol(ParserSym.NOT_EQUAL); }
 // valores primitivos
 {ENTERO}   { return symbol(ParserSym.INT, Integer.valueOf(yytext())); }
 {DECIMAL}  { return symbol(ParserSym.DECI, Float.valueOf(yytext())); }
