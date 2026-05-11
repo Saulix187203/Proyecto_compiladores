@@ -17,7 +17,15 @@ ID         = {LETRA}({LETRA}|{NUMERO}|_)*
 NO_EQUAL  = ("!="|"<>")
 // Palabras reservadas
 RESERVADAS = ("create"|"table"|"select"|"from"|"where"|"update"|"set"|
-              "insert"|"into"|"values"|"join"|"on"|"as"|"default")
+              "insert"|"into"|"values"|"on"|"as"|"default"|"distinct"|"count")
+
+// JOINS
+INNER = "inner join"
+LEFT  = "left join"
+RIGHT = "right join"
+FULL  = "full join"
+JOIN  = "join"
+
 // Data types SQL
 DT_NUM   = ("int"|"decimal"|"float"|"numeric")
 DT_STR   = ("char"|"varchar"|"text")
@@ -52,10 +60,16 @@ DT_BOOL  = ("bit")
 "<="    { return symbol(ParserSym.MENOR_IGUAL); }
 {NO_EQUAL} { return symbol(ParserSym.NOT_EQUAL); }
 // valores primitivos
-{ENTERO}   { return symbol(ParserSym.INT, Integer.valueOf(yytext())); }
 {DECIMAL}  { return symbol(ParserSym.DECI, Float.valueOf(yytext())); }
+{ENTERO}   { return symbol(ParserSym.INT, Integer.valueOf(yytext())); }
 {STRING}   { return symbol(ParserSym.STR, yytext()); }
 {ESPACIO}  { /* ignorar */ }
+// JOINS
+{INNER} { return symbol(ParserSym.INNER_JOIN); }
+{LEFT}  { return symbol(ParserSym.LEFT_JOIN); }
+{RIGHT} { return symbol(ParserSym.RIGHT_JOIN); }
+{FULL}  { return symbol(ParserSym.FULL_JOIN); }
+{JOIN}  { return symbol(ParserSym.JOIN); }
 // Palabras reservadas
 {RESERVADAS} {
   switch(yytext().toLowerCase()) {
@@ -69,12 +83,12 @@ DT_BOOL  = ("bit")
     case "insert": return symbol(ParserSym.INSERT);
     case "into":   return symbol(ParserSym.INTO);
     case "values": return symbol(ParserSym.VALUES);
-    case "join":   return symbol(ParserSym.JOIN);
     case "on":     return symbol(ParserSym.ON);
     case "as":     return symbol(ParserSym.AS);
     case "default":return symbol(ParserSym.DEFAULT);
   }
 }
+
 // Tipos de datos numéricos
 {DT_NUM} {
   switch(yytext().toLowerCase()) {
@@ -109,4 +123,4 @@ DT_BOOL  = ("bit")
   return symbol(ParserSym.VAR, yytext());
 }
 /* Caracter no reconocido */
-. { throw new Error("Caracter no reconocido: " + yytext()); }
+. { return symbol(ParserSym.ERROR, yytext()); }

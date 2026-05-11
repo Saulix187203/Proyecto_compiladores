@@ -10,9 +10,11 @@ terminal ALL, ASSIGN, MAYOR, MENOR, MAYOR_IGUAL, MENOR_IGUAL, NOT_EQUAL;
 // datos primitivos
 terminal INT, DECI, STR;
 terminal VAR;
+//joins
+terminal INNER_JOIN, LEFT_JOIN, RIGHT_JOIN, FULL_JOIN, JOIN;
 // reservadas
-terminal CREATE, TABLE, SELECT, FROM, WHERE, UPDATE, SET, DEFAULT;
-terminal INSERT, INTO, VALUES, JOIN, ON, AS;
+terminal CREATE, TABLE, SELECT, FROM, WHERE, UPDATE, SET, DEFAULT, DISTINCT, COUNT;
+terminal INSERT, INTO, VALUES, ON, AS;
 // data types numericos
 terminal DT_INT, DT_DECIMAL, DT_FLOAT, DT_NUMERIC;
 // data types de texto
@@ -22,6 +24,8 @@ terminal DT_DATE, DT_TIME, DT_DATETIME;
 // data types booleanos
 terminal DT_BOOLEAN;
 
+terminal ERROR;
+
 //simbolos no terminales
 non terminal Object sql;
 non terminal Object sentence;
@@ -29,24 +33,40 @@ non terminal Object create_stmt;
 non terminal Object select_stmt;
 non terminal Object update_stmt;
 non terminal Object insert_stmt;
+non terminal Object insert_into;
+non terminal Object insert_complement;
+non terminal Object insert_values_stmt;
+non terminal Object insert_select_stmt;
+non terminal Object assign_condition_list;
 non terminal Object distinct_stmt;
 non terminal Object count_stmt;
 //
-non terminal Object create_column_list;
+non terminal Object create_elements;
+non terminal Object elements;
+non terminal Object condition;
+non terminal Object comparator;
+non terminal Object primitives;
+non terminal Object variable;
+non terminal Object var_alias;
+non terminal Object opt_alias;
 non terminal Object column_list;
 non terminal Object column_data;
-non terminal Object value_list;
-non terminal Object table_ref;
-non terminal Object join_list;
-non terminal Object expr;
+non terminal Object primitive_list;
+non terminal Object join_expr;
+non terminal Object join_stmt;
+non terminal Object from_expr;
+non terminal Object where_expr;
 non terminal Object data_type;
 non terminal Object column;
 
-precedence left COMA;
+precedence left VAR;
+precedence left ASSIGN;
+precedence left MAYOR, MENOR, MAYOR_IGUAL, MENOR_IGUAL, NOT_EQUAL;
 
 start with sql;
-
+//estructura general de una consulta SQL
 sql ::=
+    sentence DOT_COMA
     | sql sentence DOT_COMA
     ;
 
@@ -57,12 +77,12 @@ sentence ::= create_stmt
     ;
 // CREATE TABLE NOMBRE_TABLA ( LISTA_COLUMNAS )
 create_stmt ::=
-    CREATE TABLE VAR PAREN_O create_column_list PAREN_I
+    CREATE TABLE VAR PAREN_O create_elements PAREN_I
     ;
 
-create_column_list ::=
+create_elements ::=
     column_data
-    | create_column_list COMA column_data
+    | create_elements COMA column_data
     | ALL
     ;
 
@@ -85,46 +105,70 @@ data_type ::=
     ;
 // SELECT LISTA_COLUMNAS FROM NOMBRE_TABLA
 select_stmt ::=
-    SELECT column_list FROM VAR expr DOT_COMA
-    | SELECT distinct_stmt FROM expr DOT_COMA
-    | SELECT COUNT PAREN_O count_stmt PAREN_I expr DOT_COMA
-    ; // expr puede ser WHERE, JOINS, etc
+    SELECT elements from_expr
+    | SELECT distinct_stmt from_expr
+    | SELECT COUNT PAREN_O count_stmt PAREN_I from_expr
+    ;
 
-column_list ::=
-    VAR
-    | column_list COMA VAR
+elements ::=
+    column_list
     | ALL
     ;
 
+column_list ::=
+    variable
+    | column_list COMA variable
+    ;
+variable ::=
+    VAR
+    | VAR DOT VAR
+    ;
+
 distinct_stmt ::=
-    DISTINCT column_list
+    DISTINCT elements
     ;
 
 count_stmt ::=
     distinct_stmt
     | ALL
-    | VAR
+    | variable
     ;
 
-expr ::=
-    var_alias WHERE condition
-    | join_list
-    | /* vacío */
+where_expr ::= 
+     WHERE condition
+    ;
+from_expr ::=
+    FROM var_alias
+    | FROM var_alias where_expr
+    | FROM var_alias join_expr
+    ;
+
+join_expr ::=
+    join_stmt var_alias ON condition
+    | join_expr join_stmt var_alias ON condition
+    ;
+
+join_stmt ::=
+    INNER_JOIN
+    | LEFT_JOIN
+    | RIGHT_JOIN
+    | FULL_JOIN
+    | JOIN
     ;
 
 var_alias ::=
-    VAR AS VAR
-    | VAR VAR
+    VAR opt_alias
+    ;
+opt_alias ::= /* vacío */
+    | AS VAR
     | VAR
     ;
 
-join_list ::=
-    table_ref JOIN table_ref ON condition
-    | join_list JOIN table_ref ON condition
-    ;
 condition ::=
-    VAR comparator primitives
+    variable comparator primitives
+    variable comparator variable
     ;
+
 comparator ::=
     ASSIGN
     | MAYOR
@@ -141,5 +185,31 @@ primitives ::=
     | STR
     ;
 
+// UPDATE NOMBRE_TABLA SET VAR = PRIMITIVO WHERE CONDITION
+update_stmt ::=
+    UPDATE VAR SET assign_condition_list WHERE condition
+    ;
+assign_condition_list ::=
+    VAR ASSIGN primitives
+    | assign_condition_list COMA VAR ASSIGN primitives
+    ;
 
+// INSERT STATEMENT aqui pueden ir ambos insert o uno de ellos
+insert_stmt ::=
+    insert_into insert_complement
+    ;
 
+// INSERT INTO NOMBRE_TABLA (LISTA_COLUMNAS) VALUES (LISTA_VALORES)
+insert_into ::=
+    INSERT INTO VAR PAREN_O column_list PAREN_I
+    | INSERT INTO VAR
+    ;
+
+insert_complement ::=
+    VALUES PAREN_O primitive_list PAREN_I
+    | select_stmt
+    ;
+primitive_list ::=
+    primitives
+    | primitive_list COMA primitives
+    ;

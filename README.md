@@ -186,3 +186,30 @@ Se deberá implementar una clase principal que:
    - Se valorará el manejo adecuado de errores.
 
 ![img.png](img.png)
+
+## 📌 Validación de 1ra. Fase del Proyecto
+
+En esta actividad se realizará la validación de la primera fase del proyecto, con el objetivo de comprobar el correcto funcionamiento del analizador léxico y sintáctico desarrollado.
+# 🧩 Instrucciones
+
+En esta actividad se evaluará la capacidad del sistema para procesar archivos de entrada válidos e inválidos.
+
+El sistema debe permitir la carga y análisis de dos archivos distintos:
+
+1. Archivo sin errores:
+    Debe demostrar que el sistema es capaz de procesar correctamente todas las sentencias sin generar errores.
+    Se debe incluir evidencia de la ejecución completa del archivo.
+
+
+2. Archivo con errores:
+    Debe demostrar que el sistema detecta correctamente errores léxicos y sintácticos.
+    Se debe incluir evidencia de los errores generados por el sistema.
+
+# ⚙ Requerimientos técnicos
+
+- El sistema debe permitir cargar archivos de entrada.
+- Debe mostrar claramente si las sentencias son válidas o contienen errores.
+- Debe identificar errores léxicos y sintácticos de forma diferenciada.
+- Los mensajes de error deben ser claros y comprensibles.
+
+
