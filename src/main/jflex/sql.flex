@@ -15,22 +15,6 @@ STRING     = "\"" [^\"]* "\""
 ESPACIO    = [ \t\r\n]+
 ID         = {LETRA}({LETRA}|{NUMERO}|_)*
 NO_EQUAL  = ("!="|"<>")
-// Palabras reservadas
-RESERVADAS = ("create"|"table"|"select"|"from"|"where"|"update"|"set"|
-              "insert"|"into"|"values"|"on"|"as"|"default"|"distinct"|"count")
-
-// JOINS
-INNER = "inner join"
-LEFT  = "left join"
-RIGHT = "right join"
-FULL  = "full join"
-JOIN  = "join"
-
-// Data types SQL
-DT_NUM   = ("int"|"decimal"|"float"|"numeric")
-DT_STR   = ("char"|"varchar"|"text")
-DT_DATE  = ("date"|"time"|"datetime")
-DT_BOOL  = ("bit")
 
 %{
     private Symbol symbol(int type) {
@@ -64,15 +48,17 @@ DT_BOOL  = ("bit")
 {ENTERO}   { return symbol(ParserSym.INT, Integer.valueOf(yytext())); }
 {STRING}   { return symbol(ParserSym.STR, yytext()); }
 {ESPACIO}  { /* ignorar */ }
-// JOINS
-{INNER} { return symbol(ParserSym.INNER_JOIN); }
-{LEFT}  { return symbol(ParserSym.LEFT_JOIN); }
-{RIGHT} { return symbol(ParserSym.RIGHT_JOIN); }
-{FULL}  { return symbol(ParserSym.FULL_JOIN); }
-{JOIN}  { return symbol(ParserSym.JOIN); }
-// Palabras reservadas
-{RESERVADAS} {
-  switch(yytext().toLowerCase()) {
+{ID} {
+  String lex = yytext().toLowerCase(); // normaliza todo a minúsculas
+  switch(lex) {
+    // JOINS
+    case "inner": return symbol(ParserSym.INNER_JOIN);
+    case "left":  return symbol(ParserSym.LEFT_JOIN);
+    case "right": return symbol(ParserSym.RIGHT_JOIN);
+    case "full":  return symbol(ParserSym.FULL_JOIN);
+    case "join":  return symbol(ParserSym.JOIN);
+
+    // Palabras reservadas
     case "create": return symbol(ParserSym.CREATE);
     case "table":  return symbol(ParserSym.TABLE);
     case "select": return symbol(ParserSym.SELECT);
@@ -85,42 +71,29 @@ DT_BOOL  = ("bit")
     case "values": return symbol(ParserSym.VALUES);
     case "on":     return symbol(ParserSym.ON);
     case "as":     return symbol(ParserSym.AS);
-    case "default":return symbol(ParserSym.DEFAULT);
-  }
-}
 
-// Tipos de datos numéricos
-{DT_NUM} {
-  switch(yytext().toLowerCase()) {
+    // Tipos de datos numéricos
     case "int":     return symbol(ParserSym.DT_INT);
     case "decimal": return symbol(ParserSym.DT_DECIMAL);
     case "float":   return symbol(ParserSym.DT_FLOAT);
     case "numeric": return symbol(ParserSym.DT_NUMERIC);
-  }
-}
-// Tipos de texto
-{DT_STR} {
-  switch(yytext().toLowerCase()) {
+
+    // Tipos de texto
     case "char":    return symbol(ParserSym.DT_CHAR);
     case "varchar": return symbol(ParserSym.DT_VARCHAR);
     case "text":    return symbol(ParserSym.DT_TEXT);
-  }
-}
-// Tipos de fecha y hora
-{DT_DATE} {
-  switch(yytext().toLowerCase()) {
+
+    // Tipos de fecha y hora
     case "date":     return symbol(ParserSym.DT_DATE);
     case "time":     return symbol(ParserSym.DT_TIME);
     case "datetime": return symbol(ParserSym.DT_DATETIME);
+
+    // Tipo booleano
+    case "bit": return symbol(ParserSym.DT_BOOLEAN);
+
+    default: return symbol(ParserSym.VAR, yytext());
   }
 }
-// Tipo booleano
-{DT_BOOL} {
-  return symbol(ParserSym.DT_BOOLEAN);
-}
-// Identificadores
-{ID} {
-  return symbol(ParserSym.VAR, yytext());
-}
+
 /* Caracter no reconocido */
 . { return symbol(ParserSym.ERROR, yytext()); }

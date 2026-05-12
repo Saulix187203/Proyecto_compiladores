@@ -213,3 +213,10 @@ El sistema debe permitir la carga y análisis de dos archivos distintos:
 - Los mensajes de error deben ser claros y comprensibles.
 
 
+## Comandos para usar
+- Para compilar el proyecto:
+    ```bash
+    mvn jflex:generate
+    mvn cup:generate
+    mvn clean verify
+    ```

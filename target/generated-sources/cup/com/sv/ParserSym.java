@@ -13,12 +13,12 @@ public interface ParserSym {
   public static final int INT = 14;
   public static final int UPDATE = 28;
   public static final int WHERE = 27;
-  public static final int DT_INT = 38;
+  public static final int DT_INT = 37;
   public static final int DECI = 15;
-  public static final int DT_FLOAT = 40;
-  public static final int ON = 36;
+  public static final int DT_FLOAT = 39;
+  public static final int ON = 35;
   public static final int DOT_COMA = 5;
-  public static final int DT_TEXT = 44;
+  public static final int DT_TEXT = 43;
   public static final int SELECT = 25;
   public static final int ASSIGN = 8;
   public static final int DOT = 6;
@@ -26,36 +26,35 @@ public interface ParserSym {
   public static final int EOF = 0;
   public static final int TABLE = 24;
   public static final int error = 1;
-  public static final int DISTINCT = 31;
+  public static final int DISTINCT = 30;
   public static final int COMA = 4;
-  public static final int VALUES = 35;
   public static final int INNER_JOIN = 18;
+  public static final int VALUES = 34;
   public static final int MENOR = 10;
   public static final int JOIN = 22;
-  public static final int DT_CHAR = 42;
-  public static final int DT_NUMERIC = 41;
-  public static final int ERROR = 49;
+  public static final int DT_CHAR = 41;
+  public static final int DT_NUMERIC = 40;
+  public static final int ERROR = 48;
   public static final int FROM = 26;
   public static final int MAYOR = 9;
-  public static final int INTO = 34;
-  public static final int DT_TIME = 46;
-  public static final int DT_DATETIME = 47;
-  public static final int DT_VARCHAR = 43;
+  public static final int INTO = 33;
+  public static final int DT_TIME = 45;
+  public static final int DT_DATETIME = 46;
+  public static final int DT_VARCHAR = 42;
   public static final int PAREN_O = 2;
-  public static final int DT_DATE = 45;
-  public static final int INSERT = 33;
+  public static final int DT_DATE = 44;
+  public static final int INSERT = 32;
   public static final int CREATE = 23;
-  public static final int DEFAULT = 30;
   public static final int MAYOR_IGUAL = 11;
   public static final int RIGHT_JOIN = 20;
   public static final int PAREN_I = 3;
-  public static final int DT_BOOLEAN = 48;
-  public static final int DT_DECIMAL = 39;
+  public static final int DT_BOOLEAN = 47;
+  public static final int DT_DECIMAL = 38;
   public static final int ALL = 7;
   public static final int MENOR_IGUAL = 12;
   public static final int LEFT_JOIN = 19;
-  public static final int AS = 37;
-  public static final int COUNT = 32;
+  public static final int AS = 36;
+  public static final int COUNT = 31;
   public static final int VAR = 17;
   public static final int SET = 29;
   public static final String[] terminalNames = new String[] {
@@ -89,7 +88,6 @@ public interface ParserSym {
   "WHERE",
   "UPDATE",
   "SET",
-  "DEFAULT",
   "DISTINCT",
   "COUNT",
   "INSERT",

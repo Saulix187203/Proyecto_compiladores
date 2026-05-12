@@ -13,7 +13,7 @@ terminal VAR;
 //joins
 terminal INNER_JOIN, LEFT_JOIN, RIGHT_JOIN, FULL_JOIN, JOIN;
 // reservadas
-terminal CREATE, TABLE, SELECT, FROM, WHERE, UPDATE, SET, DEFAULT, DISTINCT, COUNT;
+terminal CREATE, TABLE, SELECT, FROM, WHERE, UPDATE, SET, DISTINCT, COUNT;
 terminal INSERT, INTO, VALUES, ON, AS;
 // data types numericos
 terminal DT_INT, DT_DECIMAL, DT_FLOAT, DT_NUMERIC;
@@ -35,8 +35,6 @@ non terminal Object update_stmt;
 non terminal Object insert_stmt;
 non terminal Object insert_into;
 non terminal Object insert_complement;
-non terminal Object insert_values_stmt;
-non terminal Object insert_select_stmt;
 non terminal Object assign_condition_list;
 non terminal Object distinct_stmt;
 non terminal Object count_stmt;
@@ -57,9 +55,7 @@ non terminal Object join_stmt;
 non terminal Object from_expr;
 non terminal Object where_expr;
 non terminal Object data_type;
-non terminal Object column;
 
-precedence left VAR;
 precedence left ASSIGN;
 precedence left MAYOR, MENOR, MAYOR_IGUAL, MENOR_IGUAL, NOT_EQUAL;
 
@@ -103,6 +99,7 @@ data_type ::=
     | DT_DATETIME
     | DT_BOOLEAN
     ;
+/*
 // SELECT LISTA_COLUMNAS FROM NOMBRE_TABLA
 select_stmt ::=
     SELECT elements from_expr
@@ -159,7 +156,9 @@ join_stmt ::=
 var_alias ::=
     VAR opt_alias
     ;
-opt_alias ::= /* vacío */
+opt_alias ::= */
+/* vacío *//*
+
     | AS VAR
     | VAR
     ;
@@ -189,6 +188,7 @@ primitives ::=
 update_stmt ::=
     UPDATE VAR SET assign_condition_list WHERE condition
     ;
+
 assign_condition_list ::=
     VAR ASSIGN primitives
     | assign_condition_list COMA VAR ASSIGN primitives
@@ -212,4 +212,4 @@ insert_complement ::=
 primitive_list ::=
     primitives
     | primitive_list COMA primitives
-    ;
+    ;*/
