@@ -56,6 +56,7 @@ non terminal Object from_expr;
 non terminal Object where_expr;
 non terminal Object data_type;
 
+precedence left VAR;
 precedence left ASSIGN;
 precedence left MAYOR, MENOR, MAYOR_IGUAL, MENOR_IGUAL, NOT_EQUAL;
 
@@ -99,7 +100,8 @@ data_type ::=
     | DT_DATETIME
     | DT_BOOLEAN
     ;
-/*
+//finalizado con éxito
+
 // SELECT LISTA_COLUMNAS FROM NOMBRE_TABLA
 select_stmt ::=
     SELECT elements from_expr
@@ -156,9 +158,7 @@ join_stmt ::=
 var_alias ::=
     VAR opt_alias
     ;
-opt_alias ::= */
-/* vacío *//*
-
+opt_alias ::=
     | AS VAR
     | VAR
     ;
@@ -178,8 +178,7 @@ comparator ::=
     ;
 
 primitives ::=
-    VAR
-    | INT
+    INT
     | DECI
     | STR
     ;
@@ -212,4 +211,5 @@ insert_complement ::=
 primitive_list ::=
     primitives
     | primitive_list COMA primitives
-    ;*/
+    ;
+//finalizado con exito

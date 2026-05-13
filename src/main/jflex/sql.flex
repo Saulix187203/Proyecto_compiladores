@@ -11,7 +11,7 @@ LETRA      = [a-zA-Z]
 NUMERO     = [0-9]
 ENTERO     = ("-"?{NUMERO}+)
 DECIMAL    = ("-"?{NUMERO}+"."{NUMERO}+)
-STRING     = "\"" [^\"]* "\""
+STRING     = "'" [^']* "'"
 ESPACIO    = [ \t\r\n]+
 ID         = {LETRA}({LETRA}|{NUMERO}|_)*
 NO_EQUAL  = ("!="|"<>")
