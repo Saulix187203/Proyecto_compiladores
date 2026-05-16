@@ -97,5 +97,37 @@ NO_EQUAL  = ("!="|"<>")
   }
 }
 
-/* Caracter no reconocido */
-. { return symbol(ParserSym.ERROR, yytext()); }
+/* Caracteres especiales no permitidos - Errores léxicos explícitos */
+[@#¿!°¬€¨¥§~|\\%] {
+    String charName = yytext();
+    String charDescription = getCharacterDescription(charName);
+    Symbol s = symbol(ParserSym.ERROR, "[LEXICAL_ERROR] Carácter no permitido: '" + yytext() + "' (" + charDescription + ")");
+    return s;
+}
+
+/* Caracter no reconocido - Fallback genérico */
+. {
+    Symbol s = symbol(ParserSym.ERROR, "[LEXICAL_ERROR] Carácter no reconocido: '" + yytext() + "'");
+    return s;
+}
+
+/* Método helper para describir caracteres especiales */
+private String getCharacterDescription(String ch) {
+    switch(ch) {
+        case "@": return "Arroba";
+        case "#": return "Almohadilla";
+        case "¿": return "Interrogación invertida";
+        case "!": return "Exclamación";
+        case "°": return "Grado";
+        case "¬": return "Negación lógica";
+        case "€": return "Euro";
+        case "¨": return "Diéresis";
+        case "¥": return "Yen";
+        case "§": return "Párrafo";
+        case "~": return "Tilde";
+        case "|": return "Barra vertical";
+        case "\\": return "Barra invertida";
+        case "%": return "Porcentaje";
+        default: return "Desconocido";
+    }
+}

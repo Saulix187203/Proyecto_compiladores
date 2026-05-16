@@ -1,0 +1,8 @@
+#añadir target en gitignore
+target/
+#añadir el .idea en gitignore
+.idea/
+#añadir el .vscode en gitignore
+.vscode/
+#añadir .mvn en gitignore
+.mvn/

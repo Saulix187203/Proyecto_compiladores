@@ -1,6 +1,82 @@
 package com.sv;
 import java_cup.runtime.*;
 
+parser code {:
+    // Variables públicas para registrar errores
+    public java_cup.runtime.Symbol ultimoErrorLexico = null;
+    public Exception ultimoErrorSintactico = null;
+    public int errorLinea = -1;
+    public int errorColumna = -1;
+    public String mensajeError = "";
+    public boolean hayError = false;
+
+    // Método para registrar error léxico
+    public void registrarErrorLexico(Symbol s) {
+        this.ultimoErrorLexico = s;
+        this.errorLinea = s.left;
+        this.errorColumna = s.right;
+        this.hayError = true;
+        this.mensajeError = "Error léxico en línea " + s.left + ", columna " + s.right + ": '" + s.value + "'";
+    }
+
+    // Método para registrar error sintáctico
+    public void registrarErrorSintactico(Exception e) {
+        this.ultimoErrorSintactico = e;
+        this.hayError = true;
+        this.mensajeError = "Error sintáctico: " + e.getMessage();
+    }
+
+    // Método para registrar información detallada de errores sintácticos
+    public void registrarErrorSintacticoDetallado(String message, Object info, String tokenEsperado) {
+        this.ultimoErrorSintactico = new Exception(message);
+        this.hayError = true;
+        StringBuilder sb = new StringBuilder();
+        sb.append("[SYNTAX_ERROR] ").append(message);
+        if (tokenEsperado != null && !tokenEsperado.isEmpty()) {
+            sb.append(" | Se esperaba: ").append(tokenEsperado);
+        }
+        if (info instanceof Symbol) {
+            Symbol s = (Symbol) info;
+            this.errorLinea = s.left;
+            this.errorColumna = s.right;
+            sb.append(" | Encontrado en línea ").append(s.left).append(", columna ").append(s.right);
+            if (s.value != null) {
+                sb.append(" (").append(s.value).append(")");
+            }
+        }
+        this.mensajeError = sb.toString();
+    }
+
+    // Obtener descripción del error
+    public String obtenerErrorDetallado() {
+        if (this.ultimoErrorLexico != null) {
+            return "Error léxico: carácter no reconocido '" + this.ultimoErrorLexico.value +
+                   "' en línea " + this.errorLinea + ", columna " + this.errorColumna;
+        }
+        if (this.ultimoErrorSintactico != null) {
+            return this.mensajeError;
+        }
+        return "Sin errores";
+    }
+
+    // Método helper para capturar información de errores
+    public void capturarInformacionError(Object info) {
+        if (info instanceof Symbol) {
+            Symbol s = (Symbol) info;
+            this.errorLinea = s.left;
+            this.errorColumna = s.right;
+        }
+    }
+
+    // Método para registrar errores de parsing con contexto
+    public void registrarErrorParsing(String message, Object info) {
+        this.ultimoErrorSintactico = new Exception(message);
+        this.hayError = true;
+        this.mensajeError = message;
+        this.capturarInformacionError(info);
+    }
+:};
+
 class Parser;
 
 // simples
@@ -65,12 +141,22 @@ start with sql;
 sql ::=
     sentence DOT_COMA
     | sql sentence DOT_COMA
+    | ERROR
+    {:
+        parser.registrarErrorLexico((Symbol)$1);
+        parser.YYERROR();
+    :}
     ;
 
 sentence ::= create_stmt
     | select_stmt
     | update_stmt
     | insert_stmt
+    | ERROR
+    {:
+        parser.registrarErrorLexico((Symbol)$1);
+        parser.YYERROR();
+    :}
     ;
 // CREATE TABLE NOMBRE_TABLA ( LISTA_COLUMNAS )
 create_stmt ::=
