@@ -1,0 +1,373 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://maven.apache.org/surefire/maven-surefire-plugin/xsd/surefire-test-report.xsd" version="3.0.1" name="com.sv.ParserTest" time="0.158" tests="2" errors="0" skipped="0" failures="0">
+  <properties>
+    <property name="java.specification.version" value="17"/>
+    <property name="sun.jnu.encoding" value="UTF-8"/>
+    <property name="java.class.path" value="/home/saulo/Documentos/COMPILADORES/fase1/target/test-classes:/home/saulo/Documentos/COMPILADORES/fase1/target/classes:/home/saulo/.m2/repository/org/junit/jupiter/junit-jupiter-api/5.11.0/junit-jupiter-api-5.11.0.jar:/home/saulo/.m2/repository/org/opentest4j/opentest4j/1.3.0/opentest4j-1.3.0.jar:/home/saulo/.m2/repository/org/junit/platform/junit-platform-commons/1.11.0/junit-platform-commons-1.11.0.jar:/home/saulo/.m2/repository/org/apiguardian/apiguardian-api/1.1.2/apiguardian-api-1.1.2.jar:/home/saulo/.m2/repository/info/picocli/picocli/4.6.3/picocli-4.6.3.jar:/home/saulo/.m2/repository/org/junit/jupiter/junit-jupiter-params/5.11.0/junit-jupiter-params-5.11.0.jar:/home/saulo/.m2/repository/com/github/vbmacher/java-cup-runtime/11b-20160615-3/java-cup-runtime-11b-20160615-3.jar:"/>
+    <property name="java.vm.vendor" value="Eclipse Adoptium"/>
+    <property name="sun.arch.data.model" value="64"/>
+    <property name="java.vendor.url" value="https://adoptium.net/"/>
+    <property name="os.name" value="Linux"/>
+    <property name="java.vm.specification.version" value="17"/>
+    <property name="sun.java.launcher" value="SUN_STANDARD"/>
+    <property name="user.country" value="VE"/>
+    <property name="sun.boot.library.path" value="/home/saulo/.jdks/temurin-17.0.16/lib"/>
+    <property name="sun.java.command" value="/home/saulo/Documentos/COMPILADORES/fase1/target/surefire/surefirebooter-20260516004340312_3.jar /home/saulo/Documentos/COMPILADORES/fase1/target/surefire 2026-05-16T00-43-40_110-jvmRun1 surefire-20260516004340312_1tmp surefire_0-20260516004340312_2tmp"/>
+    <property name="jdk.debug" value="release"/>
+    <property name="surefire.test.class.path" value="/home/saulo/Documentos/COMPILADORES/fase1/target/test-classes:/home/saulo/Documentos/COMPILADORES/fase1/target/classes:/home/saulo/.m2/repository/org/junit/jupiter/junit-jupiter-api/5.11.0/junit-jupiter-api-5.11.0.jar:/home/saulo/.m2/repository/org/opentest4j/opentest4j/1.3.0/opentest4j-1.3.0.jar:/home/saulo/.m2/repository/org/junit/platform/junit-platform-commons/1.11.0/junit-platform-commons-1.11.0.jar:/home/saulo/.m2/repository/org/apiguardian/apiguardian-api/1.1.2/apiguardian-api-1.1.2.jar:/home/saulo/.m2/repository/info/picocli/picocli/4.6.3/picocli-4.6.3.jar:/home/saulo/.m2/repository/org/junit/jupiter/junit-jupiter-params/5.11.0/junit-jupiter-params-5.11.0.jar:/home/saulo/.m2/repository/com/github/vbmacher/java-cup-runtime/11b-20160615-3/java-cup-runtime-11b-20160615-3.jar:"/>
+    <property name="sun.cpu.endian" value="little"/>
+    <property name="user.home" value="/home/saulo"/>
+    <property name="user.language" value="es"/>
+    <property name="java.specification.vendor" value="Oracle Corporation"/>
+    <property name="java.version.date" value="2025-07-15"/>
+    <property name="java.home" value="/home/saulo/.jdks/temurin-17.0.16"/>
+    <property name="file.separator" value="/"/>
+    <property name="basedir" value="/home/saulo/Documentos/COMPILADORES/fase1"/>
+    <property name="java.vm.compressedOopsMode" value="32-bit"/>
+    <property name="line.separator" value="&#10;"/>
+    <property name="java.specification.name" value="Java Platform API Specification"/>
+    <property name="java.vm.specification.vendor" value="Oracle Corporation"/>
+    <property name="surefire.real.class.path" value="/home/saulo/Documentos/COMPILADORES/fase1/target/surefire/surefirebooter-20260516004340312_3.jar"/>
+    <property name="sun.management.compiler" value="HotSpot 64-Bit Tiered Compilers"/>
+    <property name="java.runtime.version" value="17.0.16+8"/>
+    <property name="user.name" value="saulo"/>
+    <property name="path.separator" value=":"/>
+    <property name="os.version" value="6.8.0-90-generic"/>
+    <property name="java.runtime.name" value="OpenJDK Runtime Environment"/>
+    <property name="file.encoding" value="UTF-8"/>
+    <property name="java.vm.name" value="OpenJDK 64-Bit Server VM"/>
+    <property name="java.vendor.version" value="Temurin-17.0.16+8"/>
+    <property name="localRepository" value="/home/saulo/.m2/repository"/>
+    <property name="java.vendor.url.bug" value="https://github.com/adoptium/adoptium-support/issues"/>
+    <property name="java.io.tmpdir" value="/tmp"/>
+    <property name="idea.version" value="2024.1.3"/>
+    <property name="java.version" value="17.0.16"/>
+    <property name="user.dir" value="/home/saulo/Documentos/COMPILADORES/fase1"/>
+    <property name="os.arch" value="amd64"/>
+    <property name="java.vm.specification.name" value="Java Virtual Machine Specification"/>
+    <property name="native.encoding" value="UTF-8"/>
+    <property name="java.library.path" value="/usr/java/packages/lib:/usr/lib64:/lib64:/lib:/usr/lib"/>
+    <property name="java.vm.info" value="mixed mode, sharing"/>
+    <property name="java.vendor" value="Eclipse Adoptium"/>
+    <property name="java.vm.version" value="17.0.16+8"/>
+    <property name="java.specification.maintenance.version" value="1"/>
+    <property name="sun.io.unicode.encoding" value="UnicodeLittle"/>
+    <property name="java.class.version" value="61.0"/>
+  </properties>
+  <testcase name="lineTestSQL" classname="com.sv.ParserTest" time="0.057">
+    <system-out><![CDATA[Parse exitoso: #0update estudiantes set score = 88.00 where id = 1;
+]]></system-out>
+  </testcase>
+  <testcase name="docTestSQL" classname="com.sv.ParserTest" time="0.059">
+    <system-out><![CDATA[📄 Procesando consultas SQL desde archivo:
+══════════════════════════════════════════════════════════════════════
+
+[Consulta 1] create table estudiantes (id int, nombre varchar(50), edad int, score decimal(10,2));
+✓ Parse exitoso: #0
+
+[Consulta 2] create table cursos (id int, nombre varchar(50), creditos int);
+✓ Parse exitoso: #0
+
+[Consulta 3] create table profesores (id int, nombre varchar(50), salario decimal(10,2));
+✓ Parse exitoso: #0
+
+[Consulta 4] create table inscripciones (id int, estudiante_id int, curso_id int);
+✓ Parse exitoso: #0
+
+[Consulta 5] create table notas (id int, estudiante_id int, curso_id int, nota decimal(5,2));
+✓ Parse exitoso: #0
+
+[Consulta 6] create table departamentos (id int, nombre varchar(50));
+✓ Parse exitoso: #0
+
+[Consulta 7] create table empleados (id int, nombre varchar(50), salario decimal(10,2), depto_id int);
+✓ Parse exitoso: #0
+
+[Consulta 8] create table proyectos (id int, nombre varchar(50));
+✓ Parse exitoso: #0
+
+[Consulta 9] create table asignaciones (id int, empleado_id int, proyecto_id int);
+✓ Parse exitoso: #0
+
+[Consulta 10] create table horarios (id int, descripcion varchar(50));
+✓ Parse exitoso: #0
+
+[Consulta 11] create table clientes (id int, nombre varchar(50));
+✓ Parse exitoso: #0
+
+[Consulta 12] create table productos (id int, nombre varchar(50), precio decimal(10,2));
+✓ Parse exitoso: #0
+
+[Consulta 13] create table pedidos (id int, cliente_id int);
+✓ Parse exitoso: #0
+
+[Consulta 14] create table detalle_pedido (id int, pedido_id int, producto_id int);
+✓ Parse exitoso: #0
+
+[Consulta 15] create table inventario (id int, producto_id int, cantidad int);
+✓ Parse exitoso: #0
+
+[Consulta 16] create table ciudades (id int, nombre varchar(50));
+✓ Parse exitoso: #0
+
+[Consulta 17] create table paises (id int, nombre varchar(50));
+✓ Parse exitoso: #0
+
+[Consulta 18] create table direcciones (id int, ciudad_id int);
+✓ Parse exitoso: #0
+
+[Consulta 19] create table usuarios (id int, nombre varchar(50));
+✓ Parse exitoso: #0
+
+[Consulta 20] create table roles (id int, nombre varchar(50));
+✓ Parse exitoso: #0
+
+[Consulta 21] create table aulas (id int, nombre varchar(50));
+✓ Parse exitoso: #0
+
+[Consulta 22] create table carreras (id int, nombre varchar(50));
+✓ Parse exitoso: #0
+
+[Consulta 23] create table facultades (id int, nombre varchar(50));
+✓ Parse exitoso: #0
+
+[Consulta 24] create table sedes (id int, nombre varchar(50));
+✓ Parse exitoso: #0
+
+[Consulta 25] create table grupos (id int, nombre varchar(50));
+✓ Parse exitoso: #0
+
+[Consulta 26] insert into estudiantes(id, nombre, edad, score) values (1, 'Juan', 20, 85.50);
+✓ Parse exitoso: #0
+
+[Consulta 27] insert into estudiantes(id, nombre, edad, score) values (2, 'Ana', 22, 90.00);
+✓ Parse exitoso: #0
+
+[Consulta 28] insert into cursos(id, nombre, creditos) values (1, 'Compiladores', 5);
+✓ Parse exitoso: #0
+
+[Consulta 29] insert into cursos(id, nombre, creditos) values (2, 'Algoritmos', 4);
+✓ Parse exitoso: #0
+
+[Consulta 30] insert into profesores(id, nombre, salario) values (1, 'Luis', 5000.00);
+✓ Parse exitoso: #0
+
+[Consulta 31] insert into clientes(id, nombre) values (1, 'Carlos');
+✓ Parse exitoso: #0
+
+[Consulta 32] insert into productos(id, nombre, precio) values (1, 'Laptop', 7500.00);
+✓ Parse exitoso: #0
+
+[Consulta 33] insert into productos(id, nombre, precio) values (2, 'Mouse', 150.00);
+✓ Parse exitoso: #0
+
+[Consulta 34] insert into pedidos(id, cliente_id) values (1, 1);
+✓ Parse exitoso: #0
+
+[Consulta 35] insert into detalle_pedido(id, pedido_id, producto_id) values (1, 1, 1);
+✓ Parse exitoso: #0
+
+[Consulta 36] insert into empleados(id, nombre, salario, depto_id) values (1, 'Mario', 3000.00, 1);
+✓ Parse exitoso: #0
+
+[Consulta 37] insert into empleados(id, nombre, salario, depto_id) values (2, 'Lucia', 3200.00, 1);
+✓ Parse exitoso: #0
+
+[Consulta 38] insert into departamentos(id, nombre) values (1, 'IT');
+✓ Parse exitoso: #0
+
+[Consulta 39] insert into proyectos(id, nombre) values (1, 'Sistema');
+✓ Parse exitoso: #0
+
+[Consulta 40] insert into asignaciones(id, empleado_id, proyecto_id) values (1, 1, 1);
+✓ Parse exitoso: #0
+
+[Consulta 41] insert into ciudades(id, nombre) values (1, 'Guatemala');
+✓ Parse exitoso: #0
+
+[Consulta 42] insert into paises(id, nombre) values (1, 'Guatemala');
+✓ Parse exitoso: #0
+
+[Consulta 43] insert into direcciones(id, ciudad_id) values (1, 1);
+✓ Parse exitoso: #0
+
+[Consulta 44] insert into usuarios(id, nombre) values (1, 'Admin');
+✓ Parse exitoso: #0
+
+[Consulta 45] insert into roles(id, nombre) values (1, 'Administrador');
+✓ Parse exitoso: #0
+
+[Consulta 46] insert into aulas(id, nombre) values (1, 'Aula 101');
+✓ Parse exitoso: #0
+
+[Consulta 47] insert into carreras(id, nombre) values (1, 'Ingenieria');
+✓ Parse exitoso: #0
+
+[Consulta 48] insert into facultades(id, nombre) values (1, 'Sistemas');
+✓ Parse exitoso: #0
+
+[Consulta 49] insert into sedes(id, nombre) values (1, 'Central');
+✓ Parse exitoso: #0
+
+[Consulta 50] insert into grupos(id, nombre) values (1, 'Grupo A');
+✓ Parse exitoso: #0
+
+[Consulta 51] update estudiantes set score = 88.00 where id = 1;
+✓ Parse exitoso: #0
+
+[Consulta 52] update estudiantes set edad = 23 where id = 2;
+✓ Parse exitoso: #0
+
+[Consulta 53] update cursos set creditos = 6 where id = 1;
+✓ Parse exitoso: #0
+
+[Consulta 54] update profesores set salario = 5500.00 where id = 1;
+✓ Parse exitoso: #0
+
+[Consulta 55] update clientes set nombre = 'Carlos Lopez' where id = 1;
+✓ Parse exitoso: #0
+
+[Consulta 56] update productos set precio = 8000.00 where id = 1;
+✓ Parse exitoso: #0
+
+[Consulta 57] update empleados set salario = 3500.00 where id = 1;
+✓ Parse exitoso: #0
+
+[Consulta 58] update empleados set salario = 3300.00 where id = 2;
+✓ Parse exitoso: #0
+
+[Consulta 59] update departamentos set nombre = 'Tecnologia' where id = 1;
+✓ Parse exitoso: #0
+
+[Consulta 60] update proyectos set nombre = 'Sistema Nuevo' where id = 1;
+✓ Parse exitoso: #0
+
+[Consulta 61] update ciudades set nombre = 'Antigua' where id = 1;
+✓ Parse exitoso: #0
+
+[Consulta 62] update paises set nombre = 'GT' where id = 1;
+✓ Parse exitoso: #0
+
+[Consulta 63] update usuarios set nombre = 'Root' where id = 1;
+✓ Parse exitoso: #0
+
+[Consulta 64] update roles set nombre = 'Admin' where id = 1;
+✓ Parse exitoso: #0
+
+[Consulta 65] update direcciones set ciudad_id = 1 where id = 1;
+✓ Parse exitoso: #0
+
+[Consulta 66] update aulas set nombre = 'Laboratorio 1' where id = 1;
+✓ Parse exitoso: #0
+
+[Consulta 67] update carreras set nombre = 'Ingenieria en Sistemas' where id = 1;
+✓ Parse exitoso: #0
+
+[Consulta 68] update facultades set nombre = 'Ingenieria' where id = 1;
+✓ Parse exitoso: #0
+
+[Consulta 69] update sedes set nombre = 'Zona 1' where id = 1;
+✓ Parse exitoso: #0
+
+[Consulta 70] update grupos set nombre = 'Grupo B' where id = 1;
+✓ Parse exitoso: #0
+
+[Consulta 71] select * from estudiantes;
+✓ Parse exitoso: #0
+
+[Consulta 72] select * from cursos;
+✓ Parse exitoso: #0
+
+[Consulta 73] select * from profesores;
+✓ Parse exitoso: #0
+
+[Consulta 74] select * from clientes;
+✓ Parse exitoso: #0
+
+[Consulta 75] select * from productos;
+✓ Parse exitoso: #0
+
+[Consulta 76] select conteo(*) from estudiantes;
+✓ Parse exitoso: #0
+
+[Consulta 77] select conteo(*) from empleados;
+✓ Parse exitoso: #0
+
+[Consulta 78] select conteo(*) from productos;
+✓ Parse exitoso: #0
+
+[Consulta 79] select conteo(*) from pedidos;
+✓ Parse exitoso: #0
+
+[Consulta 80] select conteo(*) from cursos;
+✓ Parse exitoso: #0
+
+[Consulta 81] select * from estudiantes a join cursos b on (b.id = a.id);
+✓ Parse exitoso: #0
+
+[Consulta 82] select * from empleados a join departamentos b on (b.id = a.depto_id);
+✓ Parse exitoso: #0
+
+[Consulta 83] select * from pedidos a join clientes b on (b.id = a.cliente_id);
+✓ Parse exitoso: #0
+
+[Consulta 84] select * from detalle_pedido a join productos b on (b.id = a.producto_id);
+✓ Parse exitoso: #0
+
+[Consulta 85] select * from asignaciones a join empleados b on (b.id = a.empleado_id);
+✓ Parse exitoso: #0
+
+[Consulta 86] select a.id, a.nombre from estudiantes a;
+✓ Parse exitoso: #0
+
+[Consulta 87] select a.id, a.nombre from empleados a;
+✓ Parse exitoso: #0
+
+[Consulta 88] select a.id, a.nombre from clientes a;
+✓ Parse exitoso: #0
+
+[Consulta 89] select a.id, a.nombre from productos a;
+✓ Parse exitoso: #0
+
+[Consulta 90] select a.id, a.nombre from cursos a;
+✓ Parse exitoso: #0
+
+[Consulta 91] select * from usuarios;
+✓ Parse exitoso: #0
+
+[Consulta 92] select * from roles;
+✓ Parse exitoso: #0
+
+[Consulta 93] select * from ciudades;
+✓ Parse exitoso: #0
+
+[Consulta 94] select * from paises;
+✓ Parse exitoso: #0
+
+[Consulta 95] select * from direcciones;
+✓ Parse exitoso: #0
+
+[Consulta 96] select conteo(*) from usuarios;
+✓ Parse exitoso: #0
+
+[Consulta 97] select conteo(*) from roles;
+✓ Parse exitoso: #0
+
+[Consulta 98] select conteo(*) from ciudades;
+✓ Parse exitoso: #0
+
+[Consulta 99] select conteo(*) from paises;
+✓ Parse exitoso: #0
+
+[Consulta 100] select conteo(*) from direcciones;
+✓ Parse exitoso: #0
+
+══════════════════════════════════════════════════════════════════════
+📊 Resumen:
+   Total de consultas: 100
+   Exitosas: 100
+   Fallidas: 0
+══════════════════════════════════════════════════════════════════════
+]]></system-out>
+  </testcase>
+</testsuite>

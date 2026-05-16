@@ -1,0 +1,5 @@
+com/sv/App.class
+com/sv/ParserSym.class
+com/sv/Parser.class
+com/sv/Lexer.class
+com/sv/Parser$CUP$Parser$actions.class

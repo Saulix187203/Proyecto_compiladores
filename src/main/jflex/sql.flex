@@ -66,6 +66,8 @@ NO_EQUAL  = ("!="|"<>")
     case "where":  return symbol(ParserSym.WHERE);
     case "update": return symbol(ParserSym.UPDATE);
     case "set":    return symbol(ParserSym.SET);
+    case "disctinct": return symbol(ParserSym.DISTINCT);
+    case "conteo": return symbol(ParserSym.COUNT);
     case "insert": return symbol(ParserSym.INSERT);
     case "into":   return symbol(ParserSym.INTO);
     case "values": return symbol(ParserSym.VALUES);

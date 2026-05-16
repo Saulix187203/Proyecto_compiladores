@@ -83,8 +83,7 @@ create_elements ::=
     | ALL
     ;
 
-column_data ::=
-    VAR data_type
+column_data ::= VAR data_type
     ;
 
 data_type ::=
@@ -133,8 +132,7 @@ count_stmt ::=
     | variable
     ;
 
-where_expr ::= 
-     WHERE condition
+where_expr ::= WHERE condition
     ;
 from_expr ::=
     FROM var_alias
@@ -157,15 +155,18 @@ join_stmt ::=
 
 var_alias ::=
     VAR opt_alias
+    | VAR
     ;
 opt_alias ::=
-    | AS VAR
+    AS VAR
     | VAR
     ;
 
 condition ::=
     variable comparator primitives
-    variable comparator variable
+    | variable comparator variable
+    | PAREN_O variable comparator primitives PAREN_I
+    | PAREN_O variable comparator variable PAREN_I
     ;
 
 comparator ::=
@@ -192,6 +193,7 @@ assign_condition_list ::=
     VAR ASSIGN primitives
     | assign_condition_list COMA VAR ASSIGN primitives
     ;
+//finalizado con éxito update
 
 // INSERT STATEMENT aqui pueden ir ambos insert o uno de ellos
 insert_stmt ::=
@@ -212,4 +214,4 @@ primitive_list ::=
     primitives
     | primitive_list COMA primitives
     ;
-//finalizado con exito
+//finalizado con exito los insert

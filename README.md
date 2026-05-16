@@ -220,3 +220,7 @@ El sistema debe permitir la carga y análisis de dos archivos distintos:
     mvn cup:generate
     mvn clean verify
     ```
+- Para eliminar los archivos generados por JFlex y CUP dentro de target:
+    ```bash
+    mvn clean
+    ```
