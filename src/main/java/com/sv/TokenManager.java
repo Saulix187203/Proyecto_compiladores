@@ -3,13 +3,12 @@ package com.sv;
 import java.util.ArrayList;
 import java.util.List;
 
-public class TokenCapture {
+public class TokenManager {
     private static TokenManager instance;
     private List<String> tokens;
 
     private TokenManager() {
         this.tokens = new ArrayList<>();
-        return this.tokens;
     }
 
     public static TokenManager getInstance() {
@@ -32,7 +31,7 @@ public class TokenCapture {
     }
 
     public int obtenerCantidadTokens() {
-        return tokens.size();
+         return tokens.size();
     }
 
     public String obtenerToken(int indice) {
