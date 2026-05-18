@@ -1,79 +1,21 @@
 package com.sv;
 import java_cup.runtime.*;
+import java.util.List;
+import java.util.ArrayList;
 
 parser code {:
-    // Variables públicas para registrar errores
-    public java_cup.runtime.Symbol ultimoErrorLexico = null;
-    public Exception ultimoErrorSintactico = null;
-    public int errorLinea = -1;
-    public int errorColumna = -1;
-    public String mensajeError = "";
-    public boolean hayError = false;
+    private List<String> tokens = new java.util.ArrayList<>();
 
-    // Método para registrar error léxico
-    public void registrarErrorLexico(Symbol s) {
-        this.ultimoErrorLexico = s;
-        this.errorLinea = s.left;
-        this.errorColumna = s.right;
-        this.hayError = true;
-        this.mensajeError = "Error léxico en línea " + s.left + ", columna " + s.right + ": '" + s.value + "'";
+    public void agregarToken (String token) {
+        tokens.add(token);
     }
 
-    // Método para registrar error sintáctico
-    public void registrarErrorSintactico(Exception e) {
-        this.ultimoErrorSintactico = e;
-        this.hayError = true;
-        this.mensajeError = "Error sintáctico: " + e.getMessage();
+    public java.util.List<String> obtenerTokens() {
+        return tokens;
     }
 
-    // Método para registrar información detallada de errores sintácticos
-    public void registrarErrorSintacticoDetallado(String message, Object info, String tokenEsperado) {
-        this.ultimoErrorSintactico = new Exception(message);
-        this.hayError = true;
-        StringBuilder sb = new StringBuilder();
-        sb.append("[SYNTAX_ERROR] ").append(message);
-        if (tokenEsperado != null && !tokenEsperado.isEmpty()) {
-            sb.append(" | Se esperaba: ").append(tokenEsperado);
-        }
-        if (info instanceof Symbol) {
-            Symbol s = (Symbol) info;
-            this.errorLinea = s.left;
-            this.errorColumna = s.right;
-            sb.append(" | Encontrado en línea ").append(s.left).append(", columna ").append(s.right);
-            if (s.value != null) {
-                sb.append(" (").append(s.value).append(")");
-            }
-        }
-        this.mensajeError = sb.toString();
-    }
-
-    // Obtener descripción del error
-    public String obtenerErrorDetallado() {
-        if (this.ultimoErrorLexico != null) {
-            return "Error léxico: carácter no reconocido '" + this.ultimoErrorLexico.value +
-                   "' en línea " + this.errorLinea + ", columna " + this.errorColumna;
-        }
-        if (this.ultimoErrorSintactico != null) {
-            return this.mensajeError;
-        }
-        return "Sin errores";
-    }
-
-    // Método helper para capturar información de errores
-    public void capturarInformacionError(Object info) {
-        if (info instanceof Symbol) {
-            Symbol s = (Symbol) info;
-            this.errorLinea = s.left;
-            this.errorColumna = s.right;
-        }
-    }
-
-    // Método para registrar errores de parsing con contexto
-    public void registrarErrorParsing(String message, Object info) {
-        this.ultimoErrorSintactico = new Exception(message);
-        this.hayError = true;
-        this.mensajeError = message;
-        this.capturarInformacionError(info);
+    public void limpiarTokens() {
+        tokens.clear();
     }
 :};
 
@@ -139,165 +81,278 @@ precedence left MAYOR, MENOR, MAYOR_IGUAL, MENOR_IGUAL, NOT_EQUAL;
 start with sql;
 //estructura general de una consulta SQL
 sql ::=
-    sentence DOT_COMA
-    | sql sentence DOT_COMA
-    | ERROR
-    {:
-        parser.registrarErrorLexico((Symbol)$1);
-        parser.YYERROR();
-    :}
+    sentence DOT_COMA:dotcoma {:parser.agregarToken(dotcoma.toString());:}
+    | sql sentence DOT_COMA:dotcoma {:parser.agregarToken(dotcoma.toString());:}
+    | ERROR:error_sql {:parser.agregarToken("Error"); :}
     ;
 
 sentence ::= create_stmt
     | select_stmt
     | update_stmt
     | insert_stmt
-    | ERROR
-    {:
-        parser.registrarErrorLexico((Symbol)$1);
-        parser.YYERROR();
-    :}
+    | ERROR:error_sentence {:parser.agregarToken("Error"); :}
     ;
+
 // CREATE TABLE NOMBRE_TABLA ( LISTA_COLUMNAS )
 create_stmt ::=
-    CREATE TABLE VAR PAREN_O create_elements PAREN_I
+    CREATE:create TABLE:table VAR:var PAREN_O:paren_o create_elements PAREN_I:paren_i
+    {:
+    parser.agregarToken(create.toString());
+    parser.agregarToken(table.toString());
+    parser.agregarToken(var.toString());
+    parser.agregarToken(paren_o.toString());
+    parser.agregarToken("create_elements");
+    parser.agregarToken(paren_i.toString());
+    :}
     ;
 
 create_elements ::=
-    column_data
-    | create_elements COMA column_data
-    | ALL
+    column_data {:parser.agregarToken("column_data"); :}
+    | create_elements COMA:coma column_data {:
+    parser.agregarToken("create_elements");
+    parser.agregarToken(coma.toString());
+    parser.agregarToken("column_data"); :}
+    | ALL:all {:parser.agregarToken(all.toString()); :}
     ;
 
-column_data ::= VAR data_type
+column_data ::= VAR:var data_type {:
+    parser.agregarToken(var.toString());
+    parser.agregarToken("data_type"); :}
     ;
 
 data_type ::=
-    DT_INT
-    | DT_DECIMAL PAREN_O INT COMA INT PAREN_I
-    | DT_FLOAT
-    | DT_NUMERIC PAREN_O INT COMA INT PAREN_I
-    | DT_CHAR PAREN_O INT PAREN_I
-    | DT_VARCHAR PAREN_O INT PAREN_I
-    | DT_TEXT
-    | DT_DATE
-    | DT_TIME
-    | DT_DATETIME
-    | DT_BOOLEAN
+    DT_INT:dt_int {:parser.agregarToken(dt_int.toString()); :}
+    | DT_FLOAT:dt_float {:parser.agregarToken(dt_float.toString()); :}
+    | DT_TEXT:dt_text {:parser.agregarToken(dt_text.toString()); :}
+    | DT_DATE:dt_date {:parser.agregarToken(dt_date.toString()); :}
+    | DT_TIME:dt_time {:parser.agregarToken(dt_time.toString()); :}
+    | DT_DATETIME:dt_datetime {:parser.agregarToken(dt_datetime.toString()); :}
+    | DT_BOOLEAN:dt_boolean {:parser.agregarToken(dt_boolean.toString()); :}
+    | DT_DECIMAL:dt_decimal PAREN_O:paren_o INT:number1 COMA:coma INT:number2 PAREN_I:paren_i {:
+    parser.agregarToken(dt_decimal.toString());
+    parser.agregarToken(paren_o.toString());
+    parser.agregarToken(number1.toString());
+    parser.agregarToken(coma.toString());
+    parser.agregarToken(number2.toString());
+    parser.agregarToken(paren_i.toString()); :}
+    | DT_NUMERIC:dt_numeric PAREN_O:paren_o INT:number1 COMA:coma INT:number2 PAREN_I:paren_i {:
+    parser.agregarToken(dt_numeric.toString());
+    parser.agregarToken(paren_o.toString());
+    parser.agregarToken(number1.toString());
+    parser.agregarToken(coma.toString());
+    parser.agregarToken(number2.toString());
+    parser.agregarToken(paren_i.toString()); :}
+    | DT_CHAR:dt_char PAREN_O:paren_o INT:number PAREN_I:paren_i {:
+    parser.agregarToken(dt_char.toString());
+    parser.agregarToken(paren_o.toString());
+    parser.agregarToken(number.toString());
+    parser.agregarToken(paren_i.toString()); :}
+    | DT_VARCHAR:dt_varchar PAREN_O:paren_o INT:number PAREN_I:paren_i {:
+    parser.agregarToken(dt_varchar.toString());
+    parser.agregarToken(paren_o.toString());
+    parser.agregarToken(number.toString());
+    parser.agregarToken(paren_i.toString()); :}
     ;
-//finalizado con éxito
 
 // SELECT LISTA_COLUMNAS FROM NOMBRE_TABLA
 select_stmt ::=
-    SELECT elements from_expr
-    | SELECT distinct_stmt from_expr
-    | SELECT COUNT PAREN_O count_stmt PAREN_I from_expr
+    SELECT:select elements from_expr {:
+    parser.agregarToken(select.toString());
+    parser.agregarToken("elements");
+    parser.agregarToken("from_expr"); :}
+    | SELECT:select distinct_stmt from_expr {:
+    parser.agregarToken(select.toString());
+    parser.agregarToken("distinct_stmt");
+    parser.agregarToken("from_expr"); :}
+    | SELECT:select COUNT:count PAREN_O:paren_o count_stmt PAREN_I:paren_i from_expr {:
+    parser.agregarToken(select.toString());
+    parser.agregarToken(count.toString());
+    parser.agregarToken(paren_o.toString());
+    parser.agregarToken("count_stmt");
+    parser.agregarToken(paren_i.toString());
+    parser.agregarToken("from_expr"); :}
     ;
 
 elements ::=
-    column_list
-    | ALL
+    column_list {:parser.agregarToken("column_list"); :}
+    | ALL:all{:parser.agregarToken(all.toString()); :}
     ;
 
 column_list ::=
-    variable
-    | column_list COMA variable
+    variable {:parser.agregarToken("variable"); :}
+    | column_list COMA:coma variable{:
+    parser.agregarToken("column_list");
+    parser.agregarToken(coma.toString());
+    parser.agregarToken("variable"); :}
     ;
 variable ::=
-    VAR
-    | VAR DOT VAR
+    VAR:var {:parser.agregarToken(var.toString()); :}
+    | VAR:var DOT:dot VAR:var2{:
+    parser.agregarToken(var.toString());
+    parser.agregarToken(dot.toString());
+    parser.agregarToken(var2.toString()); :}
     ;
 
-distinct_stmt ::=
-    DISTINCT elements
+distinct_stmt ::= DISTINCT:distinct elements{:
+    parser.agregarToken(distinct.toString());
+    parser.agregarToken("elements"); :}
     ;
 
 count_stmt ::=
-    distinct_stmt
-    | ALL
-    | variable
+    distinct_stmt {:parser.agregarToken("distinct_stmt"); :}
+    | ALL:all {:parser.agregarToken(all.toString()); :}
+    | variable{:parser.agregarToken("variable"); :}
     ;
 
-where_expr ::= WHERE condition
+where_expr ::= WHERE:where condition{:
+    parser.agregarToken(where.toString());
+    parser.agregarToken("condition"); :}
     ;
 from_expr ::=
-    FROM var_alias
-    | FROM var_alias where_expr
-    | FROM var_alias join_expr
+    FROM:from var_alias {:
+    parser.agregarToken(from.toString());
+    parser.agregarToken("var_alias"); :}
+    | FROM:from var_alias where_expr {:
+    parser.agregarToken(from.toString());
+    parser.agregarToken("var_alias");
+    parser.agregarToken("where_expr"); :}
+    | FROM:from var_alias join_expr {:
+    parser.agregarToken(from.toString());
+    parser.agregarToken("var_alias");
+    parser.agregarToken("join_expr"); :}
     ;
 
 join_expr ::=
-    join_stmt var_alias ON condition
-    | join_expr join_stmt var_alias ON condition
+    join_stmt var_alias ON:on condition {:
+    parser.agregarToken("join_stmt");
+    parser.agregarToken("var_alias");
+    parser.agregarToken(on.toString());
+    parser.agregarToken("condition"); :}
+    | join_expr join_stmt var_alias ON:on condition {:
+    parser.agregarToken("join_expr");
+    parser.agregarToken("join_stmt");
+    parser.agregarToken("var_alias");
+    parser.agregarToken(on.toString());
+    parser.agregarToken("condition"); :}
     ;
 
 join_stmt ::=
-    INNER_JOIN
-    | LEFT_JOIN
-    | RIGHT_JOIN
-    | FULL_JOIN
-    | JOIN
+    INNER_JOIN:inner_join {:parser.agregarToken(inner_join.toString()); :}
+    | LEFT_JOIN:left_join {:parser.agregarToken(left_join.toString()); :}
+    | RIGHT_JOIN:right_join {:parser.agregarToken(right_join.toString()); :}
+    | FULL_JOIN:full_join {:parser.agregarToken(full_join.toString()); :}
+    | JOIN:join {:parser.agregarToken(join.toString()); :}
     ;
 
 var_alias ::=
-    VAR opt_alias
-    | VAR
+    VAR:var opt_alias {:
+    parser.agregarToken(var.toString());
+    parser.agregarToken("opt_alias"); :}
+    | VAR:var {:parser.agregarToken(var.toString()); :}
     ;
 opt_alias ::=
-    AS VAR
-    | VAR
+    AS:as VAR:var {:
+    parser.agregarToken(as.toString());
+    parser.agregarToken(var.toString()); :}
+    | VAR:var {:parser.agregarToken(var.toString()); :}
     ;
 
 condition ::=
-    variable comparator primitives
-    | variable comparator variable
-    | PAREN_O variable comparator primitives PAREN_I
-    | PAREN_O variable comparator variable PAREN_I
+    variable comparator primitives {:
+    parser.agregarToken("variable");
+    parser.agregarToken("comparator");
+    parser.agregarToken("primitives"); :}
+    | variable comparator variable {:
+    parser.agregarToken("variable");
+    parser.agregarToken("comparator");
+    parser.agregarToken("variable"); :}
+    | PAREN_O:paren_o variable comparator primitives PAREN_I:paren_i {:
+    parser.agregarToken(paren_o.toString());
+    parser.agregarToken("variable");
+    parser.agregarToken("comparator");
+    parser.agregarToken("primitives");
+    parser.agregarToken(paren_i.toString()); :}
+    | PAREN_O:paren_o variable comparator variable PAREN_I:paren_i {:
+    parser.agregarToken(paren_o.toString());
+    parser.agregarToken("variable");
+    parser.agregarToken("comparator");
+    parser.agregarToken("variable");
+    parser.agregarToken(paren_i.toString()); :}
     ;
 
 comparator ::=
-    ASSIGN
-    | MAYOR
-    | MENOR
-    | MAYOR_IGUAL
-    | MENOR_IGUAL
-    | NOT_EQUAL
+    ASSIGN:assign {:parser.agregarToken(assign.toString()); :}
+    | MAYOR:mayor {:parser.agregarToken(mayor.toString()); :}
+    | MENOR:menor {:parser.agregarToken(menor.toString()); :}
+    | MAYOR_IGUAL:mayor_igual {:parser.agregarToken(mayor_igual.toString()); :}
+    | MENOR_IGUAL:menor_igual {:parser.agregarToken(menor_igual.toString()); :}
+    | NOT_EQUAL:not_equal {:parser.agregarToken(not_equal.toString()); :}
     ;
 
 primitives ::=
-    INT
-    | DECI
-    | STR
+    INT:int_literal {:parser.agregarToken(int_literal.toString()); :}
+    | DECI:deci_literal {:parser.agregarToken(deci_literal.toString()); :}
+    | STR:str_literal {:parser.agregarToken(str_literal.toString()); :}
     ;
 
 // UPDATE NOMBRE_TABLA SET VAR = PRIMITIVO WHERE CONDITION
 update_stmt ::=
-    UPDATE VAR SET assign_condition_list WHERE condition
+    UPDATE:update VAR:var SET:set assign_condition_list WHERE:where condition {:
+    parser.agregarToken(update.toString());
+    parser.agregarToken(var.toString());
+    parser.agregarToken(set.toString());
+    parser.agregarToken("assign_condition_list");
+    parser.agregarToken(where.toString());
+    parser.agregarToken("condition"); :}
     ;
 
 assign_condition_list ::=
-    VAR ASSIGN primitives
-    | assign_condition_list COMA VAR ASSIGN primitives
+    VAR:var ASSIGN:assign primitives {:
+    parser.agregarToken(var.toString());
+    parser.agregarToken(assign.toString());
+    parser.agregarToken("primitives"); :}
+    | assign_condition_list COMA:coma VAR:var2 ASSIGN:assign2 primitives {:
+    parser.agregarToken("assign_condition_list");
+    parser.agregarToken(coma.toString());
+    parser.agregarToken(var2.toString());
+    parser.agregarToken(assign2.toString());
+    parser.agregarToken("primitives"); :}
     ;
-//finalizado con éxito update
 
 // INSERT STATEMENT aqui pueden ir ambos insert o uno de ellos
 insert_stmt ::=
-    insert_into insert_complement
+    insert_into insert_complement {:
+    parser.agregarToken("insert_into");
+    parser.agregarToken("insert_complement"); :}
     ;
 
 // INSERT INTO NOMBRE_TABLA (LISTA_COLUMNAS) VALUES (LISTA_VALORES)
 insert_into ::=
-    INSERT INTO VAR PAREN_O column_list PAREN_I
-    | INSERT INTO VAR
+    INSERT:insert INTO:into VAR:var PAREN_O:paren_o column_list PAREN_I:paren_i {:
+    parser.agregarToken(insert.toString());
+    parser.agregarToken(into.toString());
+    parser.agregarToken(var.toString());
+    parser.agregarToken(paren_o.toString());
+    parser.agregarToken("column_list");
+    parser.agregarToken(paren_i.toString()); :}
+    | INSERT:insert INTO:into VAR:var {:
+    parser.agregarToken(insert.toString());
+    parser.agregarToken(into.toString());
+    parser.agregarToken(var.toString()); :}
     ;
 
 insert_complement ::=
-    VALUES PAREN_O primitive_list PAREN_I
-    | select_stmt
+    VALUES:values PAREN_O:paren_o primitive_list PAREN_I:paren_i {:
+    parser.agregarToken(values.toString());
+    parser.agregarToken(paren_o.toString());
+    parser.agregarToken("primitive_list");
+    parser.agregarToken(paren_i.toString()); :}
+    | select_stmt {:parser.agregarToken("select_stmt"); :}
     ;
 primitive_list ::=
-    primitives
-    | primitive_list COMA primitives
+    primitives {:parser.agregarToken("primitives"); :}
+    | primitive_list COMA:coma primitives {:
+    parser.agregarToken("primitive_list");
+    parser.agregarToken(coma.toString());
+    parser.agregarToken("primitives"); :}
     ;
-//finalizado con exito los insert

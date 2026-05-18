@@ -1,0 +1,18 @@
+body {
+    background-color: #87ccc1;
+    margin: 0;
+    padding: 0;
+  }
+  h1 {
+    text-align: center;
+    width: 50%;
+    margin: auto;
+    margin-top: 30px;
+  }
+  table {
+    border: 3px solid #cca633;
+    padding: 20px 50px;
+    margin-top: 20px;
+    border-radius: 5px;
+    background-color: #edf797;
+  }

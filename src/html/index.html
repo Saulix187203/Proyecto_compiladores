@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CLR7</title>
+  <link rel="stylesheet" href="estilos.css">
+</head>
+
+<body>
+  <h1>Ingreso de Prodcutos</h1>
+  <form action="registro.php" name="" method="POST">
+    <table border="0" align="center">
+      <tr>
+        <td>
+          Nombre del producto:
+        </td>
+        <td>
+          <label for="name"></label>
+          <input type="text" name="name" id="name" required />
+        </td>
+      </tr>
+      <tr>
+        <td>
+          Cantidad:
+        </td>
+        <td>
+          <label for="cant"></label>
+          <input type="number" name="cant" id="cant" required />
+        </td>
+      </tr>
+      <tr>
+        <td>
+          Precio:
+        </td>
+        <td>
+          <label for="much"></label>
+          <input type="much" name="much" id="much" required />
+        </td>
+      </tr>
+      <tr>
+        <td>&nbsp;</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td align="center">
+          <input type="submit" name="enviar" id="enviar" value="Registrar Producto" />
+        </td>
+        <td align="center">
+          <input type="reset" name="borrar" id="borrar" value="Restablecer" />
+        </td>
+      </tr>
+    </table>
+  </form>
+</body>
+
+</html>

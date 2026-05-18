@@ -224,3 +224,42 @@ El sistema debe permitir la carga y análisis de dos archivos distintos:
     ```bash
     mvn clean
     ```
+
+// Aquí analizamos la estructura del CREATE TABLE para obtener errores específicos
+String create_var = (String) $1.value; // obtener la variable create_var
+String table_var = (String) $2.value; // obteber la variable table_var
+String var = (String) $3.value; // obtener la variable var
+String parentesis_o = (String) $4.value; // obtener la variable parentesis_o
+String parentesis_i = (String) $6.value; // obtener la variable parentesis_i
+
+        if (create_var == null ) {
+            parser.reportSyntaxError("Palabra CREATE no especificada en la sentencia");
+            }
+            //ahora validamos que la palabra esté escrita correctamente, es decir, que sea exactamente "CREATE" y no Cerate
+        else if (!create_var.equalsIgnoreCase("CREATE")) {
+            parser.reportSyntaxError("Palabra CREATE mal escrita en la sentencia");
+            }
+        if (table_var == null || table_var.isEmpty()) {
+            parser.reportSyntaxError("Palabra TABLE no especificada en la sentencia");
+            }
+            else if (!table_var.equalsIgnoreCase("TABLE")) {
+            parser.reportSyntaxError("Palabra TABLE mal escrita en la sentencia");
+            }
+        if (var == null || var.isEmpty()) {
+            parser.reportSyntaxError("Nombre de tabla no especificada en la sentencia");
+            }
+            else if (!var.matches("[a-zA-Z_][a-zA-Z0-9_]*")) {
+            parser.reportSyntaxError("Nombre de tabla inválido en la sentencia");
+            }
+        if (parentesis_o == null || parentesis_o.isEmpty()) {
+            parser.reportSyntaxError("Paréntesis de apertura no especificada en la sentencia");
+            }
+            else if (!parentesis_o.equals("(")) {
+            parser.reportSyntaxError("Paréntesis de apertura mal escrito en la sentencia");
+            }
+        if (parentesis_i == null || parentesis_i.isEmpty()) {
+            parser.reportSyntaxError("Paréntesis de cierre no especificada en la sentencia");
+            }
+            else if (!parentesis_i.equals(")")) {
+            parser.reportSyntaxError("Paréntesis de cierre mal escrito en la sentencia");
+            }

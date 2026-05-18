@@ -4,7 +4,10 @@ import java_cup.runtime.*;
 %%
 %public
 %class Lexer
+%unicode
 %cup
+%line
+%column
 
 // Macros
 LETRA      = [a-zA-Z]
@@ -17,11 +20,11 @@ ID         = {LETRA}({LETRA}|{NUMERO}|_)*
 NO_EQUAL  = ("!="|"<>")
 
 %{
-    private Symbol symbol(int type) {
-        return new Symbol(type, yyline, yycolumn);
+    private java_cup.runtime.Symbol symbol(int type) {
+        return new java_cup.runtime.Symbol(type, yyline+1, yycolumn+1);
     }
-    private Symbol symbol(int type, Object value) {
-        return new Symbol(type, yyline, yycolumn, value);
+    private java_cup.runtime.Symbol symbol(int type, Object value) {
+        return new java_cup.runtime.Symbol(type, yyline+1, yycolumn+1, value);
     }
 %}
 
@@ -97,37 +100,8 @@ NO_EQUAL  = ("!="|"<>")
   }
 }
 
-/* Caracteres especiales no permitidos - Errores léxicos explícitos */
-[@#¿!°¬€¨¥§~|\\%] {
-    String charName = yytext();
-    String charDescription = getCharacterDescription(charName);
-    Symbol s = symbol(ParserSym.ERROR, "[LEXICAL_ERROR] Carácter no permitido: '" + yytext() + "' (" + charDescription + ")");
-    return s;
-}
+/* Caracter no reconocido*/
+. { System.out.println("Carácter no permitido: " + ParserSym.ERROR + " en linea " + (yyline+1)+ ", columna" + (yycolumn+1));
+      return symbol(ParserSym.ERROR, yytext());}
 
-/* Caracter no reconocido - Fallback genérico */
-. {
-    Symbol s = symbol(ParserSym.ERROR, "[LEXICAL_ERROR] Carácter no reconocido: '" + yytext() + "'");
-    return s;
-}
 
-/* Método helper para describir caracteres especiales */
-private String getCharacterDescription(String ch) {
-    switch(ch) {
-        case "@": return "Arroba";
-        case "#": return "Almohadilla";
-        case "¿": return "Interrogación invertida";
-        case "!": return "Exclamación";
-        case "°": return "Grado";
-        case "¬": return "Negación lógica";
-        case "€": return "Euro";
-        case "¨": return "Diéresis";
-        case "¥": return "Yen";
-        case "§": return "Párrafo";
-        case "~": return "Tilde";
-        case "|": return "Barra vertical";
-        case "\\": return "Barra invertida";
-        case "%": return "Porcentaje";
-        default: return "Desconocido";
-    }
-}
