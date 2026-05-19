@@ -4,19 +4,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class TokenManager {
-    private static TokenManager instance;
-    private List<String> tokens;
+    protected List<String> tokens;
 
-    private TokenManager() {
+
+    public TokenManager() {
         this.tokens = new ArrayList<>();
     }
 
-    public static TokenManager getInstance() {
-        if (instance == null) {
-            instance = new TokenManager();
-        }
-        return instance;
-    }
 
     public void agregarToken(String token) {
         tokens.add(token);

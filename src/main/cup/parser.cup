@@ -3,22 +3,6 @@ import java_cup.runtime.*;
 import java.util.List;
 import java.util.ArrayList;
 
-parser code {:
-    private List<String> tokens = new java.util.ArrayList<>();
-
-    public void agregarToken (String token) {
-        tokens.add(token);
-    }
-
-    public java.util.List<String> obtenerTokens() {
-        return tokens;
-    }
-
-    public void limpiarTokens() {
-        tokens.clear();
-    }
-:};
-
 class Parser;
 
 // simples
@@ -81,278 +65,256 @@ precedence left MAYOR, MENOR, MAYOR_IGUAL, MENOR_IGUAL, NOT_EQUAL;
 start with sql;
 //estructura general de una consulta SQL
 sql ::=
-    sentence DOT_COMA:dotcoma {:parser.agregarToken(dotcoma.toString());:}
-    | sql sentence DOT_COMA:dotcoma {:parser.agregarToken(dotcoma.toString());:}
-    | ERROR:error_sql {:parser.agregarToken("Error"); :}
+    sentence DOT_COMA:dotcoma {:RESULT = new ASTNode("final_simbol", dotcoma.toString());:}
+    | sql sentence DOT_COMA:dotcoma {:RESULT = new ASTNode("final_simbol", dotcoma.toString());:}
+    | ERROR:error_sql {:RESULT = new ASTNode("error", error_sql.toString());:}
     ;
 
 sentence ::= create_stmt
     | select_stmt
     | update_stmt
     | insert_stmt
-    | ERROR:error_sentence {:parser.agregarToken("Error"); :}
+    | ERROR:error_sentence {:RESULT = new ASTNode("error", error_sentence.toString());:}
     ;
 
 // CREATE TABLE NOMBRE_TABLA ( LISTA_COLUMNAS )
 create_stmt ::=
     CREATE:create TABLE:table VAR:var PAREN_O:paren_o create_elements PAREN_I:paren_i
     {:
-    parser.agregarToken(create.toString());
-    parser.agregarToken(table.toString());
-    parser.agregarToken(var.toString());
-    parser.agregarToken(paren_o.toString());
-    parser.agregarToken("create_elements");
-    parser.agregarToken(paren_i.toString());
-    :}
+    RESULT = new ASTNode("", create.toString());
+    RESULT = new ASTNode("", table.toString());
+    RESULT = new ASTNode("", var.toString());
+    RESULT = new ASTNode("", paren_o.toString());
+    RESULT = new ASTNode("", paren_i.toString()); :}//    RESULT = new ASTNode("", "create_elements".toString());
     ;
 
 create_elements ::=
-    column_data {:parser.agregarToken("column_data"); :}
+    column_data {: RESULT = new ASTNode("", "column_data"); :}
     | create_elements COMA:coma column_data {:
-    parser.agregarToken("create_elements");
-    parser.agregarToken(coma.toString());
-    parser.agregarToken("column_data"); :}
-    | ALL:all {:parser.agregarToken(all.toString()); :}
+    RESULT = new ASTNode("", coma.toString());
+     :}
+    | ALL:all {: RESULT = new ASTNode("", all.toString()); :}
     ;
 
 column_data ::= VAR:var data_type {:
-    parser.agregarToken(var.toString());
-    parser.agregarToken("data_type"); :}
+    RESULT = new ASTNode("", var.toString());
+    :}
     ;
 
 data_type ::=
-    DT_INT:dt_int {:parser.agregarToken(dt_int.toString()); :}
-    | DT_FLOAT:dt_float {:parser.agregarToken(dt_float.toString()); :}
-    | DT_TEXT:dt_text {:parser.agregarToken(dt_text.toString()); :}
-    | DT_DATE:dt_date {:parser.agregarToken(dt_date.toString()); :}
-    | DT_TIME:dt_time {:parser.agregarToken(dt_time.toString()); :}
-    | DT_DATETIME:dt_datetime {:parser.agregarToken(dt_datetime.toString()); :}
-    | DT_BOOLEAN:dt_boolean {:parser.agregarToken(dt_boolean.toString()); :}
+    DT_INT:dt_int {:RESULT = new ASTNode("", dt_int.toString()); :}
+    | DT_FLOAT:dt_float {:RESULT = new ASTNode("", dt_float.toString()); :}
+    | DT_TEXT:dt_text {:RESULT = new ASTNode("", dt_text.toString()); :}
+    | DT_DATE:dt_date {:RESULT = new ASTNode("", dt_date.toString()); :}
+    | DT_TIME:dt_time {:RESULT = new ASTNode("", dt_time.toString()); :}
+    | DT_DATETIME:dt_datetime {:RESULT = new ASTNode("", dt_datetime.toString()); :}
+    | DT_BOOLEAN:dt_boolean {:RESULT = new ASTNode("", dt_boolean.toString()); :}
     | DT_DECIMAL:dt_decimal PAREN_O:paren_o INT:number1 COMA:coma INT:number2 PAREN_I:paren_i {:
-    parser.agregarToken(dt_decimal.toString());
-    parser.agregarToken(paren_o.toString());
-    parser.agregarToken(number1.toString());
-    parser.agregarToken(coma.toString());
-    parser.agregarToken(number2.toString());
-    parser.agregarToken(paren_i.toString()); :}
+    RESULT = new ASTNode("", dt_decimal.toString());
+    RESULT = new ASTNode("", paren_o.toString());
+    RESULT = new ASTNode("", number1.toString());
+    RESULT = new ASTNode("", coma.toString());
+    RESULT = new ASTNode("", number2.toString());
+    RESULT = new ASTNode("", paren_i.toString()); :}
     | DT_NUMERIC:dt_numeric PAREN_O:paren_o INT:number1 COMA:coma INT:number2 PAREN_I:paren_i {:
-    parser.agregarToken(dt_numeric.toString());
-    parser.agregarToken(paren_o.toString());
-    parser.agregarToken(number1.toString());
-    parser.agregarToken(coma.toString());
-    parser.agregarToken(number2.toString());
-    parser.agregarToken(paren_i.toString()); :}
+    RESULT = new ASTNode("", dt_numeric.toString());
+    RESULT = new ASTNode("", paren_o.toString());
+    RESULT = new ASTNode("", number1.toString());
+    RESULT = new ASTNode("", coma.toString());
+    RESULT = new ASTNode("", number2.toString());
+    RESULT = new ASTNode("", paren_i.toString()); :}
     | DT_CHAR:dt_char PAREN_O:paren_o INT:number PAREN_I:paren_i {:
-    parser.agregarToken(dt_char.toString());
-    parser.agregarToken(paren_o.toString());
-    parser.agregarToken(number.toString());
-    parser.agregarToken(paren_i.toString()); :}
+    RESULT = new ASTNode("", dt_char.toString());
+    RESULT = new ASTNode("", paren_o.toString());
+    RESULT = new ASTNode("", number.toString());
+    RESULT = new ASTNode("", paren_i.toString()); :}
     | DT_VARCHAR:dt_varchar PAREN_O:paren_o INT:number PAREN_I:paren_i {:
-    parser.agregarToken(dt_varchar.toString());
-    parser.agregarToken(paren_o.toString());
-    parser.agregarToken(number.toString());
-    parser.agregarToken(paren_i.toString()); :}
+    RESULT = new ASTNode("", dt_varchar.toString());
+    RESULT = new ASTNode("", paren_o.toString());
+    RESULT = new ASTNode("", number.toString());
+    RESULT = new ASTNode("", paren_i.toString()); :}
     ;
 
 // SELECT LISTA_COLUMNAS FROM NOMBRE_TABLA
 select_stmt ::=
     SELECT:select elements from_expr {:
-    parser.agregarToken(select.toString());
-    parser.agregarToken("elements");
-    parser.agregarToken("from_expr"); :}
+    RESULT = new ASTNode("", select.toString());
+    :}/*RESULT = new ASTNode("", "elements".toString());
+          RESULT = new ASTNode("", "from_expr".toString()); */
     | SELECT:select distinct_stmt from_expr {:
-    parser.agregarToken(select.toString());
-    parser.agregarToken("distinct_stmt");
-    parser.agregarToken("from_expr"); :}
+    RESULT = new ASTNode("", select.toString());
+     :}/*RESULT = new ASTNode("", "distinct_stmt".toString());
+           RESULT = new ASTNode("", "from_expr".toString());*/
     | SELECT:select COUNT:count PAREN_O:paren_o count_stmt PAREN_I:paren_i from_expr {:
-    parser.agregarToken(select.toString());
-    parser.agregarToken(count.toString());
-    parser.agregarToken(paren_o.toString());
-    parser.agregarToken("count_stmt");
-    parser.agregarToken(paren_i.toString());
-    parser.agregarToken("from_expr"); :}
+    RESULT = new ASTNode("", select.toString());
+    RESULT = new ASTNode("", count.toString());
+    RESULT = new ASTNode("", paren_o.toString());
+
+    RESULT = new ASTNode("", paren_i.toString());
+    :}//RESULT = new ASTNode("", "count_stmt".toString()); RESULT = new ASTNode("", "from_expr".toString());
     ;
 
 elements ::=
-    column_list {:parser.agregarToken("column_list"); :}
-    | ALL:all{:parser.agregarToken(all.toString()); :}
+    column_list {: RESULT = new ASTNode("", "column_list"); :}
+    | ALL:all{:RESULT = new ASTNode("", all.toString()); :}
     ;
 
 column_list ::=
-    variable {:parser.agregarToken("variable"); :}
+    variable {: RESULT = new ASTNode("", "variable"); :}
     | column_list COMA:coma variable{:
-    parser.agregarToken("column_list");
-    parser.agregarToken(coma.toString());
-    parser.agregarToken("variable"); :}
+    RESULT = new ASTNode("", coma.toString());
+     :}
     ;
 variable ::=
-    VAR:var {:parser.agregarToken(var.toString()); :}
+    VAR:var {:RESULT = new ASTNode("", var.toString()); :}
     | VAR:var DOT:dot VAR:var2{:
-    parser.agregarToken(var.toString());
-    parser.agregarToken(dot.toString());
-    parser.agregarToken(var2.toString()); :}
+    RESULT = new ASTNode("", var.toString());
+    RESULT = new ASTNode("", dot.toString());
+    RESULT = new ASTNode("", var2.toString()); :}
     ;
 
 distinct_stmt ::= DISTINCT:distinct elements{:
-    parser.agregarToken(distinct.toString());
-    parser.agregarToken("elements"); :}
+    RESULT = new ASTNode("", distinct.toString());
+    :}
     ;
 
 count_stmt ::=
-    distinct_stmt {:parser.agregarToken("distinct_stmt"); :}
-    | ALL:all {:parser.agregarToken(all.toString()); :}
-    | variable{:parser.agregarToken("variable"); :}
+    distinct_stmt {: RESULT = new ASTNode("", "distinct_stmt"); :}
+    | ALL:all {:RESULT = new ASTNode("", all.toString()); :}
+    | variable{: RESULT = new ASTNode("", "variable"); :}
     ;
 
 where_expr ::= WHERE:where condition{:
-    parser.agregarToken(where.toString());
-    parser.agregarToken("condition"); :}
-    ;
+    RESULT = new ASTNode("", where.toString());
+     :}
+     ;
+
 from_expr ::=
     FROM:from var_alias {:
-    parser.agregarToken(from.toString());
-    parser.agregarToken("var_alias"); :}
+    RESULT = new ASTNode("", from.toString());
+    :}
     | FROM:from var_alias where_expr {:
-    parser.agregarToken(from.toString());
-    parser.agregarToken("var_alias");
-    parser.agregarToken("where_expr"); :}
+    RESULT = new ASTNode("", from.toString());
+     :}
     | FROM:from var_alias join_expr {:
-    parser.agregarToken(from.toString());
-    parser.agregarToken("var_alias");
-    parser.agregarToken("join_expr"); :}
+    RESULT = new ASTNode("", from.toString());
+     :}
     ;
 
 join_expr ::=
     join_stmt var_alias ON:on condition {:
-    parser.agregarToken("join_stmt");
-    parser.agregarToken("var_alias");
-    parser.agregarToken(on.toString());
-    parser.agregarToken("condition"); :}
+    RESULT = new ASTNode("", on.toString());
+     :}
     | join_expr join_stmt var_alias ON:on condition {:
-    parser.agregarToken("join_expr");
-    parser.agregarToken("join_stmt");
-    parser.agregarToken("var_alias");
-    parser.agregarToken(on.toString());
-    parser.agregarToken("condition"); :}
+    RESULT = new ASTNode("", on.toString());
+    :}
     ;
 
 join_stmt ::=
-    INNER_JOIN:inner_join {:parser.agregarToken(inner_join.toString()); :}
-    | LEFT_JOIN:left_join {:parser.agregarToken(left_join.toString()); :}
-    | RIGHT_JOIN:right_join {:parser.agregarToken(right_join.toString()); :}
-    | FULL_JOIN:full_join {:parser.agregarToken(full_join.toString()); :}
-    | JOIN:join {:parser.agregarToken(join.toString()); :}
+    INNER_JOIN:inner_join {:RESULT = new ASTNode("", inner_join.toString()); :}
+    | LEFT_JOIN:left_join {:RESULT = new ASTNode("", left_join.toString()); :}
+    | RIGHT_JOIN:right_join {:RESULT = new ASTNode("", right_join.toString()); :}
+    | FULL_JOIN:full_join {:RESULT = new ASTNode("", full_join.toString()); :}
+    | JOIN:join {:RESULT = new ASTNode("", join.toString()); :}
     ;
 
 var_alias ::=
     VAR:var opt_alias {:
-    parser.agregarToken(var.toString());
-    parser.agregarToken("opt_alias"); :}
-    | VAR:var {:parser.agregarToken(var.toString()); :}
+    RESULT = new ASTNode("", var.toString());
+     :}
+    | VAR:var {:RESULT = new ASTNode("", var.toString()); :}
     ;
 opt_alias ::=
     AS:as VAR:var {:
-    parser.agregarToken(as.toString());
-    parser.agregarToken(var.toString()); :}
-    | VAR:var {:parser.agregarToken(var.toString()); :}
+    RESULT = new ASTNode("", as.toString());
+    RESULT = new ASTNode("", var.toString()); :}
+    | VAR:var {:RESULT = new ASTNode("", var.toString()); :}
     ;
 
 condition ::=
     variable comparator primitives {:
-    parser.agregarToken("variable");
-    parser.agregarToken("comparator");
-    parser.agregarToken("primitives"); :}
+    RESULT = new ASTNode("", "condition");
+    :}
     | variable comparator variable {:
-    parser.agregarToken("variable");
-    parser.agregarToken("comparator");
-    parser.agregarToken("variable"); :}
+    RESULT = new ASTNode("", "condition");
+    :}
     | PAREN_O:paren_o variable comparator primitives PAREN_I:paren_i {:
-    parser.agregarToken(paren_o.toString());
-    parser.agregarToken("variable");
-    parser.agregarToken("comparator");
-    parser.agregarToken("primitives");
-    parser.agregarToken(paren_i.toString()); :}
+    RESULT = new ASTNode("", paren_i.toString());
+    :}
     | PAREN_O:paren_o variable comparator variable PAREN_I:paren_i {:
-    parser.agregarToken(paren_o.toString());
-    parser.agregarToken("variable");
-    parser.agregarToken("comparator");
-    parser.agregarToken("variable");
-    parser.agregarToken(paren_i.toString()); :}
+    RESULT = new ASTNode("", paren_o.toString());
+    RESULT = new ASTNode("", paren_i.toString());
+    :}
     ;
 
 comparator ::=
-    ASSIGN:assign {:parser.agregarToken(assign.toString()); :}
-    | MAYOR:mayor {:parser.agregarToken(mayor.toString()); :}
-    | MENOR:menor {:parser.agregarToken(menor.toString()); :}
-    | MAYOR_IGUAL:mayor_igual {:parser.agregarToken(mayor_igual.toString()); :}
-    | MENOR_IGUAL:menor_igual {:parser.agregarToken(menor_igual.toString()); :}
-    | NOT_EQUAL:not_equal {:parser.agregarToken(not_equal.toString()); :}
+    ASSIGN:assign {:RESULT = new ASTNode("", assign.toString()); :}
+    | MAYOR:mayor {:RESULT = new ASTNode("", mayor.toString()); :}
+    | MENOR:menor {:RESULT = new ASTNode("", menor.toString()); :}
+    | MAYOR_IGUAL:mayor_igual {:RESULT = new ASTNode("", mayor_igual.toString()); :}
+    | MENOR_IGUAL:menor_igual {:RESULT = new ASTNode("", menor_igual.toString()); :}
+    | NOT_EQUAL:not_equal {:RESULT = new ASTNode("", not_equal.toString()); :}
     ;
 
 primitives ::=
-    INT:int_literal {:parser.agregarToken(int_literal.toString()); :}
-    | DECI:deci_literal {:parser.agregarToken(deci_literal.toString()); :}
-    | STR:str_literal {:parser.agregarToken(str_literal.toString()); :}
+    INT:int_literal {:RESULT = new ASTNode("", int_literal.toString()); :}
+    | DECI:deci_literal {:RESULT = new ASTNode("", deci_literal.toString()); :}
+    | STR:str_literal {:RESULT = new ASTNode("", str_literal.toString()); :}
     ;
 
 // UPDATE NOMBRE_TABLA SET VAR = PRIMITIVO WHERE CONDITION
 update_stmt ::=
     UPDATE:update VAR:var SET:set assign_condition_list WHERE:where condition {:
-    parser.agregarToken(update.toString());
-    parser.agregarToken(var.toString());
-    parser.agregarToken(set.toString());
-    parser.agregarToken("assign_condition_list");
-    parser.agregarToken(where.toString());
-    parser.agregarToken("condition"); :}
+    RESULT = new ASTNode("", update.toString());
+    RESULT = new ASTNode("", var.toString());
+    RESULT = new ASTNode("", set.toString());
+
+    RESULT = new ASTNode("", where.toString());
+     :}//RESULT = new ASTNode("", "assign_condition_list".toString()); RESULT = new ASTNode("", "condition".toString());
     ;
 
 assign_condition_list ::=
     VAR:var ASSIGN:assign primitives {:
-    parser.agregarToken(var.toString());
-    parser.agregarToken(assign.toString());
-    parser.agregarToken("primitives"); :}
+    RESULT = new ASTNode("", var.toString());
+    RESULT = new ASTNode("", assign.toString());
+     :}
     | assign_condition_list COMA:coma VAR:var2 ASSIGN:assign2 primitives {:
-    parser.agregarToken("assign_condition_list");
-    parser.agregarToken(coma.toString());
-    parser.agregarToken(var2.toString());
-    parser.agregarToken(assign2.toString());
-    parser.agregarToken("primitives"); :}
+    RESULT = new ASTNode("", coma.toString());
+    RESULT = new ASTNode("", var2.toString());
+    RESULT = new ASTNode("", assign2.toString());
+     :}
     ;
 
 // INSERT STATEMENT aqui pueden ir ambos insert o uno de ellos
 insert_stmt ::=
-    insert_into insert_complement {:
-    parser.agregarToken("insert_into");
-    parser.agregarToken("insert_complement"); :}
+    insert_into insert_complement {: RESULT = new ASTNode("", "insert_stmt"); :}
     ;
 
 // INSERT INTO NOMBRE_TABLA (LISTA_COLUMNAS) VALUES (LISTA_VALORES)
 insert_into ::=
     INSERT:insert INTO:into VAR:var PAREN_O:paren_o column_list PAREN_I:paren_i {:
-    parser.agregarToken(insert.toString());
-    parser.agregarToken(into.toString());
-    parser.agregarToken(var.toString());
-    parser.agregarToken(paren_o.toString());
-    parser.agregarToken("column_list");
-    parser.agregarToken(paren_i.toString()); :}
+    RESULT = new ASTNode("", insert.toString());
+    RESULT = new ASTNode("", into.toString());
+    RESULT = new ASTNode("", var.toString());
+    RESULT = new ASTNode("", paren_o.toString());
+
+    RESULT = new ASTNode("", paren_i.toString()); :}//RESULT = new ASTNode("", "column_list".toString());
     | INSERT:insert INTO:into VAR:var {:
-    parser.agregarToken(insert.toString());
-    parser.agregarToken(into.toString());
-    parser.agregarToken(var.toString()); :}
+    RESULT = new ASTNode("", insert.toString());
+    RESULT = new ASTNode("", into.toString());
+    RESULT = new ASTNode("", var.toString()); :}
     ;
 
 insert_complement ::=
     VALUES:values PAREN_O:paren_o primitive_list PAREN_I:paren_i {:
-    parser.agregarToken(values.toString());
-    parser.agregarToken(paren_o.toString());
-    parser.agregarToken("primitive_list");
-    parser.agregarToken(paren_i.toString()); :}
-    | select_stmt {:parser.agregarToken("select_stmt"); :}
+    RESULT = new ASTNode("", values.toString());
+    RESULT = new ASTNode("", paren_o.toString());
+    RESULT = new ASTNode("", paren_i.toString()); :}
+    | select_stmt {: RESULT = new ASTNode("", "select_stmt"); :}
     ;
 primitive_list ::=
-    primitives {:parser.agregarToken("primitives"); :}
+    primitives {: RESULT = new ASTNode("", "primitives"); :}
     | primitive_list COMA:coma primitives {:
-    parser.agregarToken("primitive_list");
-    parser.agregarToken(coma.toString());
-    parser.agregarToken("primitives"); :}
+    RESULT = new ASTNode("", coma.toString());
+     :}
     ;

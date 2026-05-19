@@ -8,6 +8,7 @@ import java.io.StringReader;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.List;
+import java.nio.file.Path;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -75,14 +76,32 @@ class ParserTest {
     }
 
     private List<String> leer_lineas(String nombreArchivo) throws Exception {
-        try {
-            // Intentar leer desde la raíz del proyecto
-            List<String> lineas = Files.readAllLines(Paths.get(nombreArchivo));
-            return lineas;
-        } catch (Exception e1) {
-            System.out.println("⚠️  No se encontró el archivo " + nombreArchivo);
-            System.out.println("   Buscado en: " + Paths.get(nombreArchivo).toAbsolutePath());
-            throw new Exception("Archivo no encontrado: " + nombreArchivo);
+        // Intentar múltiples rutas
+        String[] rutasIntento = {
+            nombreArchivo,                                          // Ruta relativa actual
+            Paths.get("").toAbsolutePath() + "/" + nombreArchivo,  // Directorio actual
+            Paths.get("../..").toAbsolutePath() + "/" + nombreArchivo  // Raíz del proyecto (si está en target)
+        };
+
+        for (String ruta : rutasIntento) {
+            try {
+                Path path = Paths.get(ruta);
+                if (Files.exists(path)) {
+                    System.out.println("✓ Archivo encontrado en: " + path.toAbsolutePath());
+                    return Files.readAllLines(path);
+                }
+            } catch (Exception e) {
+                // Continuar con la siguiente ruta
+            }
         }
+
+        // Si no encuentra en ninguna ruta, lanzar excepción con información detallada
+        System.out.println("⚠️  No se encontró el archivo " + nombreArchivo);
+        System.out.println("   Rutas intentadas:");
+        for (String ruta : rutasIntento) {
+            System.out.println("     - " + Paths.get(ruta).toAbsolutePath());
+        }
+        System.out.println("   Directorio actual: " + Paths.get("").toAbsolutePath());
+        throw new Exception("Archivo no encontrado: " + nombreArchivo);
     }
 }
