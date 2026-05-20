@@ -34,18 +34,18 @@ NO_EQUAL  = ("!="|"<>")
 
 %%
 // tokens simples
-"("     { return symbol(ParserSym.PAREN_O); }
-")"     { return symbol(ParserSym.PAREN_I); }
-","     { return symbol(ParserSym.COMA); }
-";"     { return symbol(ParserSym.DOT_COMA); }
-"."     { return symbol(ParserSym.DOT); }
-"*"     { return symbol(ParserSym.ALL); }
-"="     { return symbol(ParserSym.ASSIGN); }
-">"     { return symbol(ParserSym.MAYOR); }
-"<"     { return symbol(ParserSym.MENOR); }
-">="    { return symbol(ParserSym.MAYOR_IGUAL); }
-"<="    { return symbol(ParserSym.MENOR_IGUAL); }
-{NO_EQUAL} { return symbol(ParserSym.NOT_EQUAL); }
+"("     { return symbol(ParserSym.PAREN_O,"("); }
+")"     { return symbol(ParserSym.PAREN_I,")"); }
+","     { return symbol(ParserSym.COMA,","); }
+";"     { return symbol(ParserSym.DOT_COMA,";"); }
+"."     { return symbol(ParserSym.DOT,"."); }
+"*"     { return symbol(ParserSym.ALL,"*"); }
+"="     { return symbol(ParserSym.ASSIGN, "="); }
+">"     { return symbol(ParserSym.MAYOR,">"); }
+"<"     { return symbol(ParserSym.MENOR,"<"); }
+">="    { return symbol(ParserSym.MAYOR_IGUAL,">="); }
+"<="    { return symbol(ParserSym.MENOR_IGUAL,"<="); }
+{NO_EQUAL} { return symbol(ParserSym.NOT_EQUAL,yytext()); }
 // valores primitivos
 {DECIMAL}  { return symbol(ParserSym.DECI, Float.valueOf(yytext())); }
 {ENTERO}   { return symbol(ParserSym.INT, Integer.valueOf(yytext())); }
@@ -55,46 +55,46 @@ NO_EQUAL  = ("!="|"<>")
   String lex = yytext().toLowerCase(); // normaliza todo a minúsculas
   switch(lex) {
     // JOINS
-    case "inner": return symbol(ParserSym.INNER_JOIN);
-    case "left":  return symbol(ParserSym.LEFT_JOIN);
-    case "right": return symbol(ParserSym.RIGHT_JOIN);
-    case "full":  return symbol(ParserSym.FULL_JOIN);
-    case "join":  return symbol(ParserSym.JOIN);
+    case "inner": return symbol(ParserSym.INNER_JOIN,"inner");
+    case "left":  return symbol(ParserSym.LEFT_JOIN,"left");
+    case "right": return symbol(ParserSym.RIGHT_JOIN,"right");
+    case "full":  return symbol(ParserSym.FULL_JOIN,"full");
+    case "join":  return symbol(ParserSym.JOIN,"join");
 
     // Palabras reservadas
-    case "create": return symbol(ParserSym.CREATE);
-    case "table":  return symbol(ParserSym.TABLE);
-    case "select": return symbol(ParserSym.SELECT);
-    case "from":   return symbol(ParserSym.FROM);
-    case "where":  return symbol(ParserSym.WHERE);
-    case "update": return symbol(ParserSym.UPDATE);
-    case "set":    return symbol(ParserSym.SET);
-    case "disctinct": return symbol(ParserSym.DISTINCT);
-    case "conteo": return symbol(ParserSym.COUNT);
-    case "insert": return symbol(ParserSym.INSERT);
-    case "into":   return symbol(ParserSym.INTO);
-    case "values": return symbol(ParserSym.VALUES);
-    case "on":     return symbol(ParserSym.ON);
-    case "as":     return symbol(ParserSym.AS);
+    case "create": return symbol(ParserSym.CREATE,"create");
+    case "table":  return symbol(ParserSym.TABLE,"table");
+    case "select": return symbol(ParserSym.SELECT,"select");
+    case "from":   return symbol(ParserSym.FROM,"from");
+    case "where":  return symbol(ParserSym.WHERE,"where");
+    case "update": return symbol(ParserSym.UPDATE,"update");
+    case "set":    return symbol(ParserSym.SET,"set");
+    case "disctinct": return symbol(ParserSym.DISTINCT,"distinct");
+    case "conteo": return symbol(ParserSym.COUNT,"conteo");
+    case "insert": return symbol(ParserSym.INSERT,"insert");
+    case "into":   return symbol(ParserSym.INTO,"into");
+    case "values": return symbol(ParserSym.VALUES,"values");
+    case "on":     return symbol(ParserSym.ON,"on");
+    case "as":     return symbol(ParserSym.AS,"as");
 
     // Tipos de datos numéricos
-    case "int":     return symbol(ParserSym.DT_INT);
-    case "decimal": return symbol(ParserSym.DT_DECIMAL);
-    case "float":   return symbol(ParserSym.DT_FLOAT);
-    case "numeric": return symbol(ParserSym.DT_NUMERIC);
+    case "int":     return symbol(ParserSym.DT_INT,"int");
+    case "decimal": return symbol(ParserSym.DT_DECIMAL,"decimal");
+    case "float":   return symbol(ParserSym.DT_FLOAT,"float");
+    case "numeric": return symbol(ParserSym.DT_NUMERIC,"numeric");
 
     // Tipos de texto
-    case "char":    return symbol(ParserSym.DT_CHAR);
-    case "varchar": return symbol(ParserSym.DT_VARCHAR);
-    case "text":    return symbol(ParserSym.DT_TEXT);
+    case "char":    return symbol(ParserSym.DT_CHAR,"char");
+    case "varchar": return symbol(ParserSym.DT_VARCHAR,"varchar");
+    case "text":    return symbol(ParserSym.DT_TEXT,"text");
 
     // Tipos de fecha y hora
-    case "date":     return symbol(ParserSym.DT_DATE);
-    case "time":     return symbol(ParserSym.DT_TIME);
-    case "datetime": return symbol(ParserSym.DT_DATETIME);
+    case "date":     return symbol(ParserSym.DT_DATE,"date");
+    case "time":     return symbol(ParserSym.DT_TIME,"time");
+    case "datetime": return symbol(ParserSym.DT_DATETIME,"datetime");
 
     // Tipo booleano
-    case "bit": return symbol(ParserSym.DT_BOOLEAN);
+    case "bit": return symbol(ParserSym.DT_BOOLEAN,"bit");
 
     default: return symbol(ParserSym.VAR, yytext());
   }

@@ -1,7 +1,5 @@
 package com.sv;
 import java_cup.runtime.*;
-import java.util.List;
-import java.util.ArrayList;
 
 class Parser;
 
@@ -65,256 +63,225 @@ precedence left MAYOR, MENOR, MAYOR_IGUAL, MENOR_IGUAL, NOT_EQUAL;
 start with sql;
 //estructura general de una consulta SQL
 sql ::=
-    sentence DOT_COMA:dotcoma {:RESULT = new ASTNode("final_simbol", dotcoma.toString());:}
-    | sql sentence DOT_COMA:dotcoma {:RESULT = new ASTNode("final_simbol", dotcoma.toString());:}
-    | ERROR:error_sql {:RESULT = new ASTNode("error", error_sql.toString());:}
+    sentence DOT_COMA:dotcoma {:RESULT = new ASTNode("final", dotcoma.toString());:}
+    | sql sentence DOT_COMA:dotcoma {:RESULT = new ASTNode("final", dotcoma.toString());:}
+    | ERROR:error_sql{:RESULT = new ASTNode("error_sql", error_sql.toString());:}
     ;
 
 sentence ::= create_stmt
     | select_stmt
     | update_stmt
     | insert_stmt
-    | ERROR:error_sentence {:RESULT = new ASTNode("error", error_sentence.toString());:}
+    | ERROR:error_sentence {:RESULT = new ASTNode("error_sentence", error_sentence.toString());:}
     ;
-
 // CREATE TABLE NOMBRE_TABLA ( LISTA_COLUMNAS )
 create_stmt ::=
-    CREATE:create TABLE:table VAR:var PAREN_O:paren_o create_elements PAREN_I:paren_i
-    {:
-    RESULT = new ASTNode("", create.toString());
-    RESULT = new ASTNode("", table.toString());
-    RESULT = new ASTNode("", var.toString());
-    RESULT = new ASTNode("", paren_o.toString());
-    RESULT = new ASTNode("", paren_i.toString()); :}//    RESULT = new ASTNode("", "create_elements".toString());
+    CREATE:create TABLE:table VAR:var PAREN_O:paren_o create_elements PAREN_I:paren_i {:
+    RESULT = new ASTNode("create", create.toString());
+    RESULT = new ASTNode("table", table.toString());
+    RESULT = new ASTNode("var", var.toString());
+    RESULT = new ASTNode("(", paren_o.toString());
+    RESULT = new ASTNode(")", paren_i.toString());:}
     ;
 
 create_elements ::=
-    column_data {: RESULT = new ASTNode("", "column_data"); :}
-    | create_elements COMA:coma column_data {:
-    RESULT = new ASTNode("", coma.toString());
-     :}
-    | ALL:all {: RESULT = new ASTNode("", all.toString()); :}
+    column_data
+    | create_elements COMA:coma column_data {: RESULT = new ASTNode(",", coma.toString());:}
+    | ALL:all {: RESULT = new ASTNode("*", all.toString());:}
     ;
 
-column_data ::= VAR:var data_type {:
-    RESULT = new ASTNode("", var.toString());
-    :}
+column_data ::= VAR:var data_type {: RESULT = new ASTNode("var", var.toString());:}
     ;
 
 data_type ::=
-    DT_INT:dt_int {:RESULT = new ASTNode("", dt_int.toString()); :}
-    | DT_FLOAT:dt_float {:RESULT = new ASTNode("", dt_float.toString()); :}
-    | DT_TEXT:dt_text {:RESULT = new ASTNode("", dt_text.toString()); :}
-    | DT_DATE:dt_date {:RESULT = new ASTNode("", dt_date.toString()); :}
-    | DT_TIME:dt_time {:RESULT = new ASTNode("", dt_time.toString()); :}
-    | DT_DATETIME:dt_datetime {:RESULT = new ASTNode("", dt_datetime.toString()); :}
-    | DT_BOOLEAN:dt_boolean {:RESULT = new ASTNode("", dt_boolean.toString()); :}
+    DT_INT:dt_int {: :}
+    | DT_FLOAT:dt_float {: RESULT = new ASTNode("float", dt_float.toString());:}
+    | DT_TEXT:dt_text {: RESULT = new ASTNode("text", dt_text.toString());:}
+    | DT_DATE:dt_date {: RESULT = new ASTNode("date", dt_date.toString());:}
+    | DT_TIME:dt_time {: RESULT = new ASTNode("time", dt_time.toString());:}
+    | DT_DATETIME:dt_datetime {:RESULT = new ASTNode("datetime", dt_datetime.toString());:}
+    | DT_BOOLEAN:dt_boolean {:RESULT = new ASTNode("boolean", dt_boolean.toString());:}
     | DT_DECIMAL:dt_decimal PAREN_O:paren_o INT:number1 COMA:coma INT:number2 PAREN_I:paren_i {:
-    RESULT = new ASTNode("", dt_decimal.toString());
-    RESULT = new ASTNode("", paren_o.toString());
-    RESULT = new ASTNode("", number1.toString());
-    RESULT = new ASTNode("", coma.toString());
-    RESULT = new ASTNode("", number2.toString());
-    RESULT = new ASTNode("", paren_i.toString()); :}
+        RESULT = new ASTNode("decimal", dt_decimal.toString());
+        RESULT = new ASTNode("(", paren_o.toString());
+        RESULT = new ASTNode("number1", number1.toString());
+        RESULT = new ASTNode(",", coma.toString());
+        RESULT = new ASTNode("number2", number2.toString());
+        RESULT = new ASTNode(")", paren_i.toString());
+        :}
     | DT_NUMERIC:dt_numeric PAREN_O:paren_o INT:number1 COMA:coma INT:number2 PAREN_I:paren_i {:
-    RESULT = new ASTNode("", dt_numeric.toString());
-    RESULT = new ASTNode("", paren_o.toString());
-    RESULT = new ASTNode("", number1.toString());
-    RESULT = new ASTNode("", coma.toString());
-    RESULT = new ASTNode("", number2.toString());
-    RESULT = new ASTNode("", paren_i.toString()); :}
+        RESULT = new ASTNode("numeric", dt_numeric.toString());
+        RESULT = new ASTNode("(", paren_o.toString());
+        RESULT = new ASTNode("number1", number1.toString());
+        RESULT = new ASTNode(",", coma.toString());
+        RESULT = new ASTNode("number2", number2.toString());
+        RESULT = new ASTNode(")", paren_i.toString());
+        :}
     | DT_CHAR:dt_char PAREN_O:paren_o INT:number PAREN_I:paren_i {:
-    RESULT = new ASTNode("", dt_char.toString());
-    RESULT = new ASTNode("", paren_o.toString());
-    RESULT = new ASTNode("", number.toString());
-    RESULT = new ASTNode("", paren_i.toString()); :}
+        RESULT = new ASTNode("char", dt_char.toString());
+        RESULT = new ASTNode("(", paren_o.toString());
+        RESULT = new ASTNode("number", number.toString());
+        RESULT = new ASTNode(")", paren_i.toString());
+        :}
     | DT_VARCHAR:dt_varchar PAREN_O:paren_o INT:number PAREN_I:paren_i {:
-    RESULT = new ASTNode("", dt_varchar.toString());
-    RESULT = new ASTNode("", paren_o.toString());
-    RESULT = new ASTNode("", number.toString());
-    RESULT = new ASTNode("", paren_i.toString()); :}
+        RESULT = new ASTNode("varchar", dt_varchar.toString());
+        RESULT = new ASTNode("(", paren_o.toString());
+        RESULT = new ASTNode("number", number.toString());
+        RESULT = new ASTNode(")", paren_i.toString());
+        :}
     ;
 
 // SELECT LISTA_COLUMNAS FROM NOMBRE_TABLA
 select_stmt ::=
-    SELECT:select elements from_expr {:
-    RESULT = new ASTNode("", select.toString());
-    :}/*RESULT = new ASTNode("", "elements".toString());
-          RESULT = new ASTNode("", "from_expr".toString()); */
-    | SELECT:select distinct_stmt from_expr {:
-    RESULT = new ASTNode("", select.toString());
-     :}/*RESULT = new ASTNode("", "distinct_stmt".toString());
-           RESULT = new ASTNode("", "from_expr".toString());*/
+    SELECT:select elements from_expr {:RESULT = new ASTNode("select", select.toString());:}
+    | SELECT:select distinct_stmt from_expr {:RESULT = new ASTNode("select", select.toString());:}
     | SELECT:select COUNT:count PAREN_O:paren_o count_stmt PAREN_I:paren_i from_expr {:
-    RESULT = new ASTNode("", select.toString());
-    RESULT = new ASTNode("", count.toString());
-    RESULT = new ASTNode("", paren_o.toString());
-
-    RESULT = new ASTNode("", paren_i.toString());
-    :}//RESULT = new ASTNode("", "count_stmt".toString()); RESULT = new ASTNode("", "from_expr".toString());
+    RESULT = new ASTNode("select", select.toString());
+    RESULT = new ASTNode("count", count.toString());
+    RESULT = new ASTNode("(", paren_o.toString());
+    RESULT = new ASTNode(")", paren_i.toString());
+    :}
     ;
 
 elements ::=
-    column_list {: RESULT = new ASTNode("", "column_list"); :}
-    | ALL:all{:RESULT = new ASTNode("", all.toString()); :}
+    column_list
+    | ALL:all{:RESULT = new ASTNode("*", all.toString());:}
     ;
 
 column_list ::=
-    variable {: RESULT = new ASTNode("", "variable"); :}
-    | column_list COMA:coma variable{:
-    RESULT = new ASTNode("", coma.toString());
-     :}
+    variable
+    | column_list COMA:coma variable{:RESULT = new ASTNode(",", coma.toString());:}
     ;
 variable ::=
-    VAR:var {:RESULT = new ASTNode("", var.toString()); :}
+    VAR:var {:RESULT = new ASTNode("var", var.toString());:}
     | VAR:var DOT:dot VAR:var2{:
-    RESULT = new ASTNode("", var.toString());
-    RESULT = new ASTNode("", dot.toString());
-    RESULT = new ASTNode("", var2.toString()); :}
+    RESULT = new ASTNode("var", var.toString());
+    RESULT = new ASTNode(".", dot.toString());
+    RESULT = new ASTNode("var2", var2.toString());
+    :}
     ;
 
-distinct_stmt ::= DISTINCT:distinct elements{:
-    RESULT = new ASTNode("", distinct.toString());
-    :}
+distinct_stmt ::= DISTINCT:distinct elements{:RESULT = new ASTNode("distinct", distinct.toString());:}
     ;
 
 count_stmt ::=
-    distinct_stmt {: RESULT = new ASTNode("", "distinct_stmt"); :}
-    | ALL:all {:RESULT = new ASTNode("", all.toString()); :}
-    | variable{: RESULT = new ASTNode("", "variable"); :}
+    distinct_stmt
+    | ALL:all {:RESULT = new ASTNode("*", all.toString());:}
+    | variable
     ;
 
-where_expr ::= WHERE:where condition{:
-    RESULT = new ASTNode("", where.toString());
-     :}
-     ;
-
+where_expr ::= WHERE:where condition{:RESULT = new ASTNode("where", where.toString());:}
+    ;
 from_expr ::=
-    FROM:from var_alias {:
-    RESULT = new ASTNode("", from.toString());
-    :}
-    | FROM:from var_alias where_expr {:
-    RESULT = new ASTNode("", from.toString());
-     :}
-    | FROM:from var_alias join_expr {:
-    RESULT = new ASTNode("", from.toString());
-     :}
+    FROM:from var_alias {:RESULT = new ASTNode("from", from.toString());:}
+    | FROM:from var_alias where_expr {:RESULT = new ASTNode("from", from.toString());:}
+    | FROM:from var_alias join_expr {:RESULT = new ASTNode("from", from.toString());:}
     ;
 
 join_expr ::=
-    join_stmt var_alias ON:on condition {:
-    RESULT = new ASTNode("", on.toString());
-     :}
-    | join_expr join_stmt var_alias ON:on condition {:
-    RESULT = new ASTNode("", on.toString());
-    :}
+    join_stmt var_alias ON:on condition {:RESULT = new ASTNode("on", on.toString());:}
+    | join_expr join_stmt var_alias ON:on condition {:RESULT = new ASTNode("on", on.toString());:}
     ;
 
 join_stmt ::=
-    INNER_JOIN:inner_join {:RESULT = new ASTNode("", inner_join.toString()); :}
-    | LEFT_JOIN:left_join {:RESULT = new ASTNode("", left_join.toString()); :}
-    | RIGHT_JOIN:right_join {:RESULT = new ASTNode("", right_join.toString()); :}
-    | FULL_JOIN:full_join {:RESULT = new ASTNode("", full_join.toString()); :}
-    | JOIN:join {:RESULT = new ASTNode("", join.toString()); :}
+    INNER_JOIN:inner_join {:RESULT = new ASTNode("inner_join", inner_join.toString());:}
+    | LEFT_JOIN:left_join {:RESULT = new ASTNode("left_join", left_join.toString());:}
+    | RIGHT_JOIN:right_join {:RESULT = new ASTNode("right_join", right_join.toString());:}
+    | FULL_JOIN:full_join {:RESULT = new ASTNode("full_join", full_join.toString());:}
+    | JOIN:join {:RESULT = new ASTNode("join", join.toString());:}
     ;
 
 var_alias ::=
-    VAR:var opt_alias {:
-    RESULT = new ASTNode("", var.toString());
-     :}
-    | VAR:var {:RESULT = new ASTNode("", var.toString()); :}
+    VAR:var opt_alias {:RESULT = new ASTNode("var", var.toString());:}
+    | VAR:var {:RESULT = new ASTNode("var", var.toString());:}
     ;
 opt_alias ::=
     AS:as VAR:var {:
-    RESULT = new ASTNode("", as.toString());
-    RESULT = new ASTNode("", var.toString()); :}
-    | VAR:var {:RESULT = new ASTNode("", var.toString()); :}
+    RESULT = new ASTNode("as", as.toString());
+    RESULT = new ASTNode("var", var.toString());
+    :}
+    | VAR:var{: RESULT = new ASTNode("var", var.toString());:}
     ;
 
 condition ::=
-    variable comparator primitives {:
-    RESULT = new ASTNode("", "condition");
-    :}
-    | variable comparator variable {:
-    RESULT = new ASTNode("", "condition");
-    :}
+    variable comparator primitives
+    | variable comparator variable
     | PAREN_O:paren_o variable comparator primitives PAREN_I:paren_i {:
-    RESULT = new ASTNode("", paren_i.toString());
-    :}
+        RESULT = new ASTNode("(", paren_o.toString());
+        RESULT = new ASTNode(")", paren_i.toString());:}
     | PAREN_O:paren_o variable comparator variable PAREN_I:paren_i {:
-    RESULT = new ASTNode("", paren_o.toString());
-    RESULT = new ASTNode("", paren_i.toString());
-    :}
+        RESULT = new ASTNode("(", paren_o.toString());
+        RESULT = new ASTNode(")", paren_i.toString());:}
     ;
 
 comparator ::=
-    ASSIGN:assign {:RESULT = new ASTNode("", assign.toString()); :}
-    | MAYOR:mayor {:RESULT = new ASTNode("", mayor.toString()); :}
-    | MENOR:menor {:RESULT = new ASTNode("", menor.toString()); :}
-    | MAYOR_IGUAL:mayor_igual {:RESULT = new ASTNode("", mayor_igual.toString()); :}
-    | MENOR_IGUAL:menor_igual {:RESULT = new ASTNode("", menor_igual.toString()); :}
-    | NOT_EQUAL:not_equal {:RESULT = new ASTNode("", not_equal.toString()); :}
+    ASSIGN:assign {:RESULT = new ASTNode("=", assign.toString());:}
+    | MAYOR:mayor {:RESULT = new ASTNode(">", mayor.toString());:}
+    | MENOR:menor {:RESULT = new ASTNode("<", menor.toString());:}
+    | MAYOR_IGUAL:mayor_igual {:RESULT = new ASTNode(">=", mayor_igual.toString());:}
+    | MENOR_IGUAL:menor_igual {:RESULT = new ASTNode("<=", menor_igual.toString());:}
+    | NOT_EQUAL:not_equal {:RESULT = new ASTNode("<>", not_equal.toString());:}
     ;
 
 primitives ::=
-    INT:int_literal {:RESULT = new ASTNode("", int_literal.toString()); :}
-    | DECI:deci_literal {:RESULT = new ASTNode("", deci_literal.toString()); :}
-    | STR:str_literal {:RESULT = new ASTNode("", str_literal.toString()); :}
+    INT:int_p {:RESULT = new ASTNode("int_p", int_p.toString());:}
+    | DECI:deci_p {:RESULT = new ASTNode("deci_p", deci_p.toString());:}
+    | STR:str_p {:RESULT = new ASTNode("str_p", str_p.toString());:}
     ;
 
 // UPDATE NOMBRE_TABLA SET VAR = PRIMITIVO WHERE CONDITION
 update_stmt ::=
-    UPDATE:update VAR:var SET:set assign_condition_list WHERE:where condition {:
-    RESULT = new ASTNode("", update.toString());
-    RESULT = new ASTNode("", var.toString());
-    RESULT = new ASTNode("", set.toString());
-
-    RESULT = new ASTNode("", where.toString());
-     :}//RESULT = new ASTNode("", "assign_condition_list".toString()); RESULT = new ASTNode("", "condition".toString());
+    UPDATE:update VAR:var SET:set assign_condition_list WHERE:where condition{:
+        RESULT = new ASTNode("update", update.toString());
+        RESULT = new ASTNode("var", var.toString());
+        RESULT = new ASTNode("set", set.toString());
+        RESULT = new ASTNode("where", where.toString());
+        :}
     ;
 
 assign_condition_list ::=
     VAR:var ASSIGN:assign primitives {:
-    RESULT = new ASTNode("", var.toString());
-    RESULT = new ASTNode("", assign.toString());
-     :}
-    | assign_condition_list COMA:coma VAR:var2 ASSIGN:assign2 primitives {:
-    RESULT = new ASTNode("", coma.toString());
-    RESULT = new ASTNode("", var2.toString());
-    RESULT = new ASTNode("", assign2.toString());
-     :}
+        RESULT = new ASTNode("var", var.toString());
+        RESULT = new ASTNode("=", assign.toString());
+        :}
+    | assign_condition_list COMA:coma VAR:var ASSIGN:assign primitives{:
+        RESULT = new ASTNode("coma", coma.toString());
+        RESULT = new ASTNode("var", var.toString());
+        RESULT = new ASTNode("=", assign.toString());
+        :}
     ;
 
 // INSERT STATEMENT aqui pueden ir ambos insert o uno de ellos
 insert_stmt ::=
-    insert_into insert_complement {: RESULT = new ASTNode("", "insert_stmt"); :}
+    insert_into insert_complement
     ;
 
 // INSERT INTO NOMBRE_TABLA (LISTA_COLUMNAS) VALUES (LISTA_VALORES)
 insert_into ::=
-    INSERT:insert INTO:into VAR:var PAREN_O:paren_o column_list PAREN_I:paren_i {:
-    RESULT = new ASTNode("", insert.toString());
-    RESULT = new ASTNode("", into.toString());
-    RESULT = new ASTNode("", var.toString());
-    RESULT = new ASTNode("", paren_o.toString());
-
-    RESULT = new ASTNode("", paren_i.toString()); :}//RESULT = new ASTNode("", "column_list".toString());
-    | INSERT:insert INTO:into VAR:var {:
-    RESULT = new ASTNode("", insert.toString());
-    RESULT = new ASTNode("", into.toString());
-    RESULT = new ASTNode("", var.toString()); :}
+    INSERT:insert INTO:into VAR:var PAREN_O:paren_o column_list PAREN_I:paren_i{:
+        RESULT = new ASTNode("insert", insert.toString());
+        RESULT = new ASTNode("into", into.toString());
+        RESULT = new ASTNode("var", var.toString());
+        RESULT = new ASTNode("(", paren_o.toString());
+        RESULT = new ASTNode(")", paren_i.toString());
+        :}
+    | INSERT:insert INTO:into VAR:var{:
+        RESULT = new ASTNode("insert", insert.toString());
+        RESULT = new ASTNode("into", into.toString());
+        RESULT = new ASTNode("var", var.toString());
+        :}
     ;
 
 insert_complement ::=
-    VALUES:values PAREN_O:paren_o primitive_list PAREN_I:paren_i {:
-    RESULT = new ASTNode("", values.toString());
-    RESULT = new ASTNode("", paren_o.toString());
-    RESULT = new ASTNode("", paren_i.toString()); :}
-    | select_stmt {: RESULT = new ASTNode("", "select_stmt"); :}
+    VALUES:values PAREN_O:paren_o primitive_list PAREN_I:paren_i{:
+        RESULT = new ASTNode("values", values.toString());
+        RESULT = new ASTNode("(", paren_o.toString());
+        RESULT = new ASTNode(")", paren_i.toString());
+        :}
+    | select_stmt
     ;
 primitive_list ::=
-    primitives {: RESULT = new ASTNode("", "primitives"); :}
-    | primitive_list COMA:coma primitives {:
-    RESULT = new ASTNode("", coma.toString());
-     :}
+    primitives
+    | primitive_list COMA:coma primitives {:RESULT = new ASTNode("coma", coma.toString());:}
     ;
+
