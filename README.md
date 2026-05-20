@@ -225,41 +225,146 @@ El sistema debe permitir la carga y análisis de dos archivos distintos:
     mvn clean
     ```
 
-// Aquí analizamos la estructura del CREATE TABLE para obtener errores específicos
-String create_var = (String) $1.value; // obtener la variable create_var
-String table_var = (String) $2.value; // obteber la variable table_var
-String var = (String) $3.value; // obtener la variable var
-String parentesis_o = (String) $4.value; // obtener la variable parentesis_o
-String parentesis_i = (String) $6.value; // obtener la variable parentesis_i
+## respuesta
+Voy a indicar los cambios necesarios y dar ejemplos de código (exactos) para que puedas construir un árbol AST útil y luego imprimir cada parte en pantalla en el formato que indicas (valor:tipo, una por línea).
+Checklist de cambios a aplicar (no los voy a modificar yo — sigue siendo lectura/guía):
+1. Añadir métodos de ayuda en ASTNode.java para añadir hijos y para imprimir el árbol.
+2. Cambiar las acciones en parser.cup para construir un nodo padre que agregue como hijos los ASTNode de los tokens y subproducciones (ahora las acciones crean varios RESULT = new ASTNode(...) y se pisan; hay que crear un root y hacer root.children.add(...) y devolver root).
+3. En App.java imprimir el AST retornado por parser.parse() (castearlo a ASTNode y llamar al método de impresión).
+4. Regenerar parser/jflex y compilar (ej.: mvn clean package).
+A continuación tienes los snippets concretos que debes aplicar.
+   1. ASTNode.java — añade helpers y un método de impresión plana (valor:tipo por línea). Reemplaza el contenido actual por este (o añade los métodos indicados):
+```java
+package com.sv;
 
-        if (create_var == null ) {
-            parser.reportSyntaxError("Palabra CREATE no especificada en la sentencia");
-            }
-            //ahora validamos que la palabra esté escrita correctamente, es decir, que sea exactamente "CREATE" y no Cerate
-        else if (!create_var.equalsIgnoreCase("CREATE")) {
-            parser.reportSyntaxError("Palabra CREATE mal escrita en la sentencia");
-            }
-        if (table_var == null || table_var.isEmpty()) {
-            parser.reportSyntaxError("Palabra TABLE no especificada en la sentencia");
-            }
-            else if (!table_var.equalsIgnoreCase("TABLE")) {
-            parser.reportSyntaxError("Palabra TABLE mal escrita en la sentencia");
-            }
-        if (var == null || var.isEmpty()) {
-            parser.reportSyntaxError("Nombre de tabla no especificada en la sentencia");
-            }
-            else if (!var.matches("[a-zA-Z_][a-zA-Z0-9_]*")) {
-            parser.reportSyntaxError("Nombre de tabla inválido en la sentencia");
-            }
-        if (parentesis_o == null || parentesis_o.isEmpty()) {
-            parser.reportSyntaxError("Paréntesis de apertura no especificada en la sentencia");
-            }
-            else if (!parentesis_o.equals("(")) {
-            parser.reportSyntaxError("Paréntesis de apertura mal escrito en la sentencia");
-            }
-        if (parentesis_i == null || parentesis_i.isEmpty()) {
-            parser.reportSyntaxError("Paréntesis de cierre no especificada en la sentencia");
-            }
-            else if (!parentesis_i.equals(")")) {
-            parser.reportSyntaxError("Paréntesis de cierre mal escrito en la sentencia");
-            }
+import java.util.ArrayList;
+import java.util.List;
+
+public class ASTNode {
+    public String type;
+    public String value;
+    public List<ASTNode> children;
+
+    public ASTNode(String type, String value) {
+        this.type = type;
+        this.value = value;
+        this.children = new ArrayList<>();
+    }
+
+    // helper para añadir hijo
+    public void add(ASTNode child) {
+        if (child != null) this.children.add(child);
+    }
+
+    // helper para añadir muchos hijos
+    public void addAll(List<ASTNode> list) {
+        if (list != null) this.children.addAll(list);
+    }
+
+    // imprime cada nodo en una línea: valor:tipo (preorder)
+    public void printFlat() {
+        printFlat("");
+    }
+
+    private void printFlat(String indent) {
+        // imprime solo valor:tipo, sin indentación extra (pero mantengo indent como opción)
+        String v = value != null ? value : "";
+        String t = type != null ? type : "";
+        System.out.println(v + ":" + t);
+        for (ASTNode c : children) {
+            c.printFlat(indent + "  ");
+        }
+    }
+
+    @Override
+    public String toString() {
+        return (value != null ? value : "") + ":" + (type != null ? type : "");
+    }
+} 
+```
+   2. Cambios en parser.cup — ejemplo para las producciones relevantes (sobre todo sql, update_stmt, assign_condition_list). Necesitas nombrar las subproducciones para poder usarlas en las acciones (ej: assign_condition_list:acl), y construir un root que agrupe. Aquí unos ejemplos concretos (sustituye las acciones actuales por las que siguen):
+    
+    Producción sql (para devolver el árbol con la oración y el DOT_COMA):
+```java
+sql ::=
+    sentence:sent DOT_COMA:dotcoma {: 
+        ASTNode root = new ASTNode("sql", "");
+        // añadir la sentence (si ya es ASTNode)
+        if (sent != null) root.add((ASTNode) sent);
+        root.add(new ASTNode("dot_coma", dotcoma.toString()));
+        RESULT = root;
+    :}
+    | sql:previous sentence:sent DOT_COMA:dotcoma {: 
+        ASTNode root = new ASTNode("sql", "");
+        if (previous != null) root.add((ASTNode) previous);
+        if (sent != null) root.add((ASTNode) sent);
+        root.add(new ASTNode("dot_coma", dotcoma.toString()));
+        RESULT = root;
+    :}
+    | ERROR:error_sql{: RESULT = new ASTNode("error_sql", error_sql.toString());:}
+    ;
+```
+    Producción update_stmt (para agrupar UPDATE, table_name, SET, assign_condition_list y opcional WHERE):
+
+```java
+update_stmt ::=
+    UPDATE:update VAR:var SET:set assign_condition_list:acl WHERE:where condition:cond {:
+        ASTNode root = new ASTNode("update_stmt", "");
+        root.add(new ASTNode("update", update.toString()));
+        root.add(new ASTNode("var", var.toString()));
+        root.add(new ASTNode("set", set.toString()));
+        // acl viene de assign_condition_list (puede ser un nodo que contenga varias asignaciones)
+        if (acl != null) root.add((ASTNode) acl);
+        root.add(new ASTNode("where", where.toString()));
+        if (cond != null) root.add((ASTNode) cond);
+        RESULT = root;
+    :}
+    ;
+```
+    Producción assign_condition_list (para agrupar varias asignaciones o condiciones):
+```java
+assign_condition_list ::=
+    VAR:var ASSIGN:assign primitives:pr {:
+        ASTNode pair = new ASTNode("assign_pair", "");
+        pair.add(new ASTNode("var", var.toString()));
+        pair.add(new ASTNode("=", assign.toString()));
+        // primitives (INT/DECI/STR) ya genera su propio ASTNode en la producción primitives
+        if (pr != null) pair.add((ASTNode) pr);
+        RESULT = pair;
+    :}
+    | assign_condition_list:list COMA:coma VAR:var ASSIGN:assign primitives:pr {:
+        ASTNode root = new ASTNode("assign_condition_list", "");
+        // traer asignaciones previas (list)
+        if (list != null) root.add((ASTNode) list);
+        // coma token para separar (opcional)
+        root.add(new ASTNode("coma", coma.toString()));
+        ASTNode pair = new ASTNode("assign_pair", "");
+        pair.add(new ASTNode("var", var.toString()));
+        pair.add(new ASTNode("=", assign.toString()));
+        if (pr != null) pair.add((ASTNode) pr);
+        root.add(pair);
+        RESULT = root;
+    :}
+    ;
+``` 
+    Notas sobre los cambios en parser.cup:
+- He usado nombres (:sent, :dotcoma, :acl, :cond, :pr, :list) para poder acceder a valores dentro de la acción.
+- En las acciones convierto esos objetos a ASTNode cuando son producciones que ya retornan ASTNodes.
+- El root que devuelves debería representar la estructura completa de la sentencia. Ajusta los nombres de tipo/valor si quieres otros nombres.
+
+    3.App.java — para imprimir el AST después de parsear. Aquí un ejemplo de cómo hacerlo (sustituye el contenido del main por esto):
+```java
+try {
+    Parser parser = new Parser(new Lexer(new StringReader(input)));
+    Object result = parser.parse();
+    if (result instanceof ASTNode) {
+        ASTNode root = (ASTNode) result;
+        // imprime cada nodo como valor:tipo (preorder)
+        root.printFlat();
+    } else {
+        System.out.println("Resultado: " + result);
+    }
+} catch (Exception e) {
+System.out.println("✗ Entrada no aceptada. Error: " + e.getMessage());
+}
+```
